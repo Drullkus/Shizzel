@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import us.drullk.shizzel.forestry.bees.BeeManager;
 import us.drullk.shizzel.proxy.CommonProxy;
 
 @Mod(modid = Shizzel.MOD_ID, name = Shizzel.MOD_NAME, version = Shizzel.VERSION, dependencies = "required-after:chisel;after:Forestry")
@@ -30,16 +31,22 @@ public class Shizzel {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		logger.info("Shizzel's shenangans have begun! Prepare yourself, Chisel!");
 		proxy.preInit();
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.init();
+
+		BeeManager.getBeeRoot();
+		BeeManager.setupAlleles();
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit();
+
+		BeeManager.lateBeeInit();
 	}
 }
