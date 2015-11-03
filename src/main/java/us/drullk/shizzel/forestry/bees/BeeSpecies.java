@@ -22,7 +22,7 @@ import java.util.*;
 
 public enum BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
-	CHISEL("Chiseling", "chisum", BeeClassification.CHISEL, 0xAFFFB7, 0xBEEEEF,
+	CHISEL("Chiseling", "chisum", BeeClassification.CHISEL, 0x7d3903, 0xd8d8d8,
 			EnumTemperature.NORMAL, EnumHumidity.NORMAL, true, false, true, false, false);
 
 	public static void setupBeeSpecies() {
@@ -353,7 +353,7 @@ public enum BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 		switch (this) {
 		case CHISEL:
-			value = "shizzle:bees/chisel/";
+			value = "shizzel:bees/chisel/";
 			break;
 
 		default:
