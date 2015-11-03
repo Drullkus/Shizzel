@@ -9,11 +9,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import us.drullk.shizzel.proxy.CommonProxy;
 
-@Mod(modid = Shizzel.MOD_ID, name = Shizzel.MOD_NAME, version = Shizzel.VERSION, dependencies = "after:Chisel;after:Forestry")
+@Mod(modid = Shizzel.MOD_ID, name = Shizzel.MOD_NAME, version = Shizzel.VERSION, dependencies = "required-after:chisel;after:Forestry")
 public class Shizzel {
 
-	public static final String MOD_ID = "chisel";
-	public static final String MOD_NAME = "Chisel";
+	public static final String MOD_ID = "shizzel";
+	public static final String MOD_NAME = "Shizzel";
 	public static final String VERSION = "@VERSION@";
 
 	public static final Logger logger = LogManager.getLogger(MOD_NAME);

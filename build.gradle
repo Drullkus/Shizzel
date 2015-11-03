@@ -74,14 +74,14 @@ repositories {
     
     maven {
         name 'forestry'
-        url "http://jenkins.ic2.player.to"
+        url "http://maven.ic2.player.to/"
     }
 }
 
 dependencies {
     //compile "mcp.mobius.waila:Waila:${waila_version}_${minecraft_version}:dev"
-	compile "net.sengir.forestry:forestry_${minecraft_version}:${project.forestry_version}:api"
-   	runtime "net.sengir.forestry:forestry_${minecraft_version}:${project.forestry_version}:dev"
+    compile "net.sengir.forestry:forestry_${minecraft_version}:${forestry_version}:api"
+    runtime "net.sengir.forestry:forestry_${minecraft_version}:${forestry_version}:dev"
 	compile "codechicken:CodeChickenLib:${minecraft_version}-${ccl_version}:dev"
 	compile "codechicken:CodeChickenCore:${minecraft_version}-${ccc_version}:dev"
 	compile "codechicken:NotEnoughItems:${minecraft_version}-${nei_version}:dev"
