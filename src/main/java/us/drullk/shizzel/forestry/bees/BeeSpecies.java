@@ -23,7 +23,7 @@ import java.util.*;
 public enum BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	CHISEL("Chiseling", "chisum", BeeClassification.CHISEL, 0xAFFFB7, 0xBEEEEF,
-			EnumTemperature.NORMAL, EnumHumidity.NORMAL, false, false, true, false, true);
+			EnumTemperature.NORMAL, EnumHumidity.NORMAL, true, false, true, false, false);
 
 	public static void setupBeeSpecies() {
 		CHISEL.registerGenomeTemplate(BeeGenomeManager.getTemplateChisel());

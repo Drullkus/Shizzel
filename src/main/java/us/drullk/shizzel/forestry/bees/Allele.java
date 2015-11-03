@@ -20,7 +20,7 @@ public class Allele implements IAllele
 	public static void setupAdditionalAlleles() {
 		forestryBaseEffect = (IAlleleBeeEffect) getBaseAllele("effectNone");
 
-		chiselGrief = new AlleleEffectChisel("Chiseling", true, 100);
+		chiselGrief = new AlleleEffectChisel("Chiseling", true, 1);
 	}
 
 	public Allele(String id, boolean isDominant) {

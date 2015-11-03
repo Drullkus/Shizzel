@@ -5,15 +5,18 @@ import forestry.api.apiculture.IBeeHousing;
 import forestry.api.apiculture.IBeeModifier;
 import forestry.api.genetics.IEffectData;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import team.chisel.api.ICarvable;
 import team.chisel.api.carving.ICarvingGroup;
 import team.chisel.api.carving.ICarvingVariation;
 import team.chisel.carving.Carving;
 import team.chisel.utils.General;
+import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.forestry.bees.BeeManager;
 import us.drullk.shizzel.utils.Helper;
 
@@ -53,34 +56,42 @@ public class AlleleEffectChisel extends AlleleEffect
 
 		Block block = world.getBlock(xCoord, yCoord, zCoord);
 		int metadata = world.getBlockMetadata(xCoord, yCoord, zCoord);
-		ICarvingGroup group = Carving.chisel.getGroup(block, metadata);
 
-		if (group != null)
+		//Shizzel.logger.info("DEBUG - " + block.getUnlocalizedName());
+
+		if ((block != null) && (block != Blocks.air) && (block != Blocks.wooden_door) && (block != Blocks.iron_door))
 		{
-			List<ICarvingVariation> list = group.getVariations();
+			//Shizzel.logger.info("DEBUG - " + block.getUnlocalizedName());
 
-			main: for (ItemStack stack : OreDictionary.getOres(group.getOreName())) {
-				ICarvingVariation v = General.getVariation(stack);
-				for (ICarvingVariation check : list) {
-					if (check.getBlock() == v.getBlock() && check.getBlockMeta() == v.getBlockMeta()) {
-						continue main;
+			if (Carving.chisel.getGroup(block, metadata) != null)
+			{
+				ICarvingGroup group = Carving.chisel.getGroup(block, metadata);
+
+				List<ICarvingVariation> list = group.getVariations();
+
+				main:
+				for (ItemStack stack : OreDictionary.getOres(group.getOreName())) {
+					ICarvingVariation v = General.getVariation(stack);
+					for (ICarvingVariation check : list) {
+						if (check.getBlock() == v.getBlock() && check.getBlockMeta() == v.getBlockMeta()) {
+							continue main;
+						}
 					}
+					list.add(General.getVariation(stack));
 				}
-				list.add(General.getVariation(stack));
-			}
 
-			ICarvingVariation[] variations = list.toArray(new ICarvingVariation[] {});
+				ICarvingVariation[] variations = list.toArray(new ICarvingVariation[] {});
 
-			for (int i = 0; i < variations.length; i++) {
-				ICarvingVariation v = variations[i];
+				for (int i = 0; i < variations.length; i++) {
+					ICarvingVariation v = variations[i];
 
-				if (v.getBlock() == block && v.getBlockMeta() == metadata)
-				{
-					world.setBlock(xCoord, yCoord, zCoord, variations[i < variations.length ? i : 0].getBlock(), variations[i < variations.length ? i : 0].getBlockMeta(), 3);
+					if (v.getBlock() == block && v.getBlockMeta() == metadata) {
+						//Shizzel.logger.info("DEBUG - " + block.getUnlocalizedName());
+						world.setBlock(xCoord, yCoord, zCoord, variations[i+1 < variations.length ? i+1 : 0].getBlock(), variations[i+1 < variations.length ? i+1 : 0].getBlockMeta(), 3);
+					}
 				}
 			}
 		}
-
 		storedData.setInteger(0, 0);
 
 		return storedData;
