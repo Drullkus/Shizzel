@@ -1,5 +1,6 @@
 package us.drullk.shizzel;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -39,14 +40,22 @@ public class Shizzel {
 	public void init(FMLInitializationEvent event) {
 		proxy.init();
 
-		BeeManager.getBeeRoot();
-		BeeManager.setupAlleles();
+		if (Loader.isModLoaded("Forestry"))
+		{
+			logger.info("Chiseling Bees: Many hours of fun under endless hours of unchiseling.");
+
+			BeeManager.getBeeRoot();
+			BeeManager.setupAlleles();
+		}
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit();
 
-		BeeManager.lateBeeInit();
+		if (Loader.isModLoaded("Forestry"))
+		{
+			BeeManager.lateBeeInit();
+		}
 	}
 }

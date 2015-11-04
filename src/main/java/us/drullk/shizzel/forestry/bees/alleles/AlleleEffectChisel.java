@@ -59,7 +59,7 @@ public class AlleleEffectChisel extends AlleleEffect
 
 		//Shizzel.logger.info("DEBUG - " + block.getUnlocalizedName());
 
-		if ((block != null) && (block != Blocks.air) && (block != Blocks.wooden_door) && (block != Blocks.iron_door))
+		if ((block != null) && (block != Blocks.air) && (block != Blocks.wooden_door) && (Item.getItemFromBlock(block) != null))
 		{
 			//Shizzel.logger.info("DEBUG - " + block.getUnlocalizedName());
 
