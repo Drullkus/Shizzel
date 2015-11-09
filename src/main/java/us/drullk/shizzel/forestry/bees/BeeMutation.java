@@ -37,8 +37,8 @@ public class BeeMutation implements IBeeMutation {
 	private int baseChance;
 	private boolean isSecret;
 	private boolean isMoonRestricted;
-	private Helper.MoonPhase moonPhaseStart;
-	private Helper.MoonPhase moonPhaseEnd;
+	//private Helper.MoonPhase moonPhaseStart;
+	//private Helper.MoonPhase moonPhaseEnd;
 	private float moonPhaseMutationBonus;
 	private boolean requiresNight;
 	private boolean requiresBlock;
@@ -78,7 +78,7 @@ public class BeeMutation implements IBeeMutation {
 
 		if (this.arePartners(allele0, allele1)) {
 			// This mutation applies. Continue calculation.
-			if (this.moonPhaseStart != null && this.moonPhaseEnd != null) {
+			/*if (this.moonPhaseStart != null && this.moonPhaseEnd != null) {
 				// Only occurs during the phases.
 				if (this.isMoonRestricted && !Helper.MoonPhase.getMoonPhase(housing.getWorld()).isBetween(this.moonPhaseStart, this.moonPhaseEnd)) {
 					chance = 0;
@@ -89,7 +89,7 @@ public class BeeMutation implements IBeeMutation {
 						chance = (int)(chance * this.moonPhaseMutationBonus);
 					}
 				}
-			}
+			}//*/
 
 			if (this.requiresBlock) {
 				Block blockBelow;
@@ -187,7 +187,7 @@ public class BeeMutation implements IBeeMutation {
 	public Collection<String> getSpecialConditions() {
 		ArrayList<String> conditions = new ArrayList<String>();
 
-		if (this.isMoonRestricted && moonPhaseStart != null && moonPhaseEnd != null) {
+		/*if (this.isMoonRestricted && moonPhaseStart != null && moonPhaseEnd != null) {
 			if (moonPhaseStart != moonPhaseEnd) {
 				conditions.add(String.format(Helper.getLocalizedString("research.requiresPhase"),
 						moonPhaseStart.getLocalizedNameAlt(), moonPhaseEnd.getLocalizedNameAlt()));
@@ -196,7 +196,7 @@ public class BeeMutation implements IBeeMutation {
 				conditions.add(String.format(Helper.getLocalizedString("research.requiresPhaseSingle"),
 						moonPhaseStart.getLocalizedName()));
 			}
-		}
+		}//*/
 
 		if (this.requiresBlock) {
 			if (this.requiredBlockName != null) {
@@ -280,7 +280,7 @@ public class BeeMutation implements IBeeMutation {
 		return this;
 	}
 
-	public BeeMutation setMoonPhaseRestricted(Helper.MoonPhase phase) {
+	/*public BeeMutation setMoonPhaseRestricted(Helper.MoonPhase phase) {
 		setMoonPhaseRestricted(phase, phase);
 		return this;
 	}
@@ -299,7 +299,7 @@ public class BeeMutation implements IBeeMutation {
 		this.moonPhaseEnd = end;
 
 		return this;
-	}
+	}//*/
 
 	public BeeMutation setBiomeRequired(BiomeDictionary.Type biomeType) {
 		this.requiredBiomeType = biomeType;

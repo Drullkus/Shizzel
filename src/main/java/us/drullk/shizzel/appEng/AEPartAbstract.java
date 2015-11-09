@@ -1,11 +1,13 @@
 package us.drullk.shizzel.appEng;
 
 import appeng.api.AEApi;
+import appeng.api.config.SecurityPermissions;
 import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.events.MENetworkEventSubscribe;
 import appeng.api.networking.events.MENetworkPowerStatusChange;
 import appeng.api.networking.security.IActionHost;
+import appeng.api.networking.security.ISecurityGrid;
 import appeng.api.parts.*;
 import appeng.api.util.AECableType;
 import appeng.api.util.DimensionalCoord;
@@ -25,6 +27,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import us.drullk.shizzel.utils.Helper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,15 +36,15 @@ import java.util.Random;
 
 public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
-	private IGridNode node;
-	private IPartHost host;
-	private ForgeDirection cableSide;
-	private TileEntity TE;
-	private boolean recevingRedstonePower;
-	private boolean isActive;
-	private AEGridBlock gridBlock;
-	private int ownerID = -1;
-    private double powerUsage;
+	protected IGridNode node;
+	protected IPartHost host;
+	protected ForgeDirection cableSide;
+	protected TileEntity TE;
+	protected boolean recevingRedstonePower;
+	protected boolean isActive;
+	protected AEGridBlock gridBlock;
+	protected int ownerID = -1;
+    protected double powerUsage;
 
 	@MENetworkEventSubscribe
 	public void setPower(MENetworkPowerStatusChange statusChange)
@@ -60,13 +63,66 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
 	public DimensionalCoord getLocation()
 	{
-		return new DimensionalCoord( this.TE.getWorldObj(), this.TE.xCoord, this.TE.yCoord, this.TE.zCoord );
+		return new DimensionalCoord(this.TE.getWorldObj(), this.TE.xCoord, this.TE.yCoord, this.TE.zCoord);
 	}
+
+    public final void markForSave()
+    {
+        if(this.host != null)
+        {
+            this.host.markForSave();
+        }
+    }
+
+    protected boolean doesPlayerHavePermission(EntityPlayer player, SecurityPermissions permission)
+    {
+        ISecurityGrid sGrid = this.gridBlock.getSecurityGrid();
+
+        if(sGrid == null)
+        {
+            return false;
+        }
+
+        return sGrid.hasPermission( player, permission );
+    }
+
+    public boolean doesPlayerHavePermissionToOpenGui(EntityPlayer player)
+    {
+        return false;
+    }
+
+    public boolean isActive()
+    {
+        if( Helper.isServerSide() )
+        {
+            if( this.node != null )
+            {
+                this.isActive = this.node.isActive();
+            }
+        }
+
+        return this.isActive;
+    }
+
+    public Object getServerGuiElement(EntityPlayer player)
+    {
+        return null;
+    }
+
+    public ForgeDirection getSide()
+    {
+        return this.cableSide;
+    }
 
 	@Override
 	public IGridNode getActionableNode() {
 		return this.node;
 	}
+
+    public AEGridBlock getGridBlock()
+    {
+        return this.gridBlock;
+    }
 
 	@Override
 	public IGridNode getGridNode() {
@@ -129,7 +185,7 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
 	@Override
 	public boolean isSolid() {
-		return false;
+        return false;
 	}
 
 	@Override
@@ -163,7 +219,7 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
 	@Override
 	public int getLightLevel() {
-		return 0; //isActive() ? 15 : 0;
+		return this.isActive ? 15 : 0;
 	}
 
 	@Override
@@ -231,16 +287,12 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 	{
 		if( FMLCommonHandler.instance().getEffectiveSide().isServer() )
 		{
-			// Create the grid block
 			this.gridBlock = new AEGridBlock(this);
 
-			// Create the node
 			this.node = AEApi.instance().createGridNode(this.gridBlock);
 
-			// Update state
 			this.node.updateState();
 
-			// Set the player id
 			this.node.setPlayerID(this.ownerID);
 
 			this.setPower(null);
@@ -297,4 +349,12 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
 	@Override
 	public abstract void getBoxes(IPartCollisionHelper iPartCollisionHelper);
+
+    public void setupPartFromItem( final ItemStack itemPart )
+    {
+        if( itemPart.hasTagCompound() )
+        {
+            this.readFromNBT( itemPart.getTagCompound() );
+        }
+    }
 }

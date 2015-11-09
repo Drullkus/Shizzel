@@ -1,11 +1,12 @@
 package us.drullk.shizzel.utils;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public class Helper {
 
-	public enum MoonPhase {
+	/*public enum MoonPhase {
 		FULL("full"),
 		WANING_GIBBOUS("gibbousWaning"),
 		WANING_HALF("halfWaning"),
@@ -54,7 +55,7 @@ public class Helper {
 		public static MoonPhase getMoonPhaseFromTime(long time) {
 			return MoonPhase.values()[(int) ((time - 6000) / 24000L) % 8];
 		}
-	}
+	}//*/
 
 
 	public static String getLocalizedString(String key, Object... objects)
@@ -68,4 +69,26 @@ public class Helper {
 			return String.format(StatCollector.translateToFallback(key), objects);
 		}
 	}
+
+	private static FMLCommonHandler FCH = FMLCommonHandler.instance();
+
+	public static final boolean isClientSide()
+	{
+		return Helper.FCH.getEffectiveSide().isClient();
+	}
+
+	public static final boolean isServerSide()
+	{
+		return Helper.FCH.getEffectiveSide().isServer();
+	}
+
+	public static boolean isPointInGuiRegion(int top, int left, int height, int width, int pointX, int pointY, int guiLeft, int guiTop)
+	{
+		return isPointInRegion(top, left, height, width, pointX - guiLeft, pointY - guiTop);
+	}
+
+    public static boolean isPointInRegion(int top, int left, int height, int width, int pointX, int pointY)
+    {
+        return ( pointX >= left ) && ( pointX <= ( left + width ) ) && ( pointY >= top ) && ( pointY <= ( top + height ) );
+    }
 }

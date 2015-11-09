@@ -6,14 +6,21 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import us.drullk.shizzel.forestry.bees.BeeManager;
+import us.drullk.shizzel.appEng.AppEng;
+import us.drullk.shizzel.forestry.Forestry;
 import us.drullk.shizzel.proxy.CommonProxy;
 
-@Mod(modid = Shizzel.MOD_ID, name = Shizzel.MOD_NAME, version = Shizzel.VERSION, dependencies = "required-after:chisel;after:Forestry")
+@Mod(modid = Shizzel.MOD_ID, name = Shizzel.MOD_NAME, version = Shizzel.VERSION, dependencies =
+        "required-after:chisel;" +
+                "after:Forestry;" +
+                "after:appliedenergistics2")
 public class Shizzel {
-
 	public static final String MOD_ID = "shizzel";
 	public static final String MOD_NAME = "Shizzel";
 	public static final String VERSION = "@VERSION@";
@@ -24,8 +31,24 @@ public class Shizzel {
 	public static Shizzel instance;
 
 	public Shizzel() {
-		//Stuff
+		// Constructor
 	}
+
+    public static CreativeTabs ShizzelTab = new CreativeTabs( "Shizzel" )
+    {
+
+        @Override
+        public ItemStack getIconItemStack()
+        {
+            return new ItemStack(Items.cooked_porkchop, 1);
+        }
+
+        @Override
+        public Item getTabIconItem()
+        {
+            return Items.cooked_porkchop;
+        }
+    };
 
 	@SidedProxy(clientSide = "us.drullk.shizzel.proxy.ClientProxy", serverSide = "us.drullk.shizzel.proxy.CommonProxy")
 	public static CommonProxy proxy;
@@ -34,6 +57,11 @@ public class Shizzel {
 	public void preInit(FMLPreInitializationEvent event) {
 		logger.info("Shizzel's shenangans have begun! Prepare yourself, Chisel!");
 		proxy.preInit();
+
+        if (Loader.isModLoaded("appliedenergistics2"))
+        {
+            AppEng.preInit();
+        }
 	}
 
 	@Mod.EventHandler
@@ -42,10 +70,7 @@ public class Shizzel {
 
 		if (Loader.isModLoaded("Forestry"))
 		{
-			logger.info("Chiseling Bees: Many hours of fun under endless hours of unchiseling.");
-
-			BeeManager.getBeeRoot();
-			BeeManager.setupAlleles();
+            Forestry.init();
 		}
 	}
 
@@ -55,7 +80,7 @@ public class Shizzel {
 
 		if (Loader.isModLoaded("Forestry"))
 		{
-			BeeManager.lateBeeInit();
+            Forestry.postInit();
 		}
 	}
 }
