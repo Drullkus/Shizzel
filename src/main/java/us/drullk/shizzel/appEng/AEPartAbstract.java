@@ -57,10 +57,10 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 	@MENetworkEventSubscribe
 	public void setPower(MENetworkPowerStatusChange statusChange)
 	{
-		if (node != null)
+		if (this.node != null)
 		{
-			isActive = node.isActive();
-			host.markForUpdate();
+            this.isActive = node.isActive();
+            this.host.markForUpdate();
 		}
 	}
 
@@ -221,11 +221,11 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 	@Override
 	public void writeToNBT(NBTTagCompound nbtTagCompound)
 	{
-		if (node != null)
+		if (this.node != null)
 		{
 			NBTTagCompound nodeTag = new NBTTagCompound();
 
-			node.saveToNBT("node0", nodeTag);
+            this.node.saveToNBT("node0", nodeTag);
 
 			nbtTagCompound.setTag("node", nodeTag);
 		}
@@ -234,13 +234,13 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound)
 	{
-		if (nbtTagCompound.hasKey("node") && node != null)
+		if (nbtTagCompound.hasKey("node") && this.node != null)
 		{
-			node.loadFromNBT("node0", nbtTagCompound.getCompoundTag("node"));
+            this.node.loadFromNBT("node0", nbtTagCompound.getCompoundTag("node"));
 
             this.ownerID = nbtTagCompound.getInteger( "Owner" );
 
-			node.updateState();
+            this.node.updateState();
 		}
 	}
 
@@ -261,9 +261,9 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 		{
 			World world = this.TE.getWorldObj();
 
-			int x = TE.xCoord;
-			int y = TE.yCoord;
-			int z = TE.zCoord;
+			int x = this.TE.xCoord;
+			int y = this.TE.yCoord;
+			int z = this.TE.zCoord;
 
 			this.recevingRedstonePower = world.isBlockIndirectlyGettingPowered(x, y, z);
 		}
@@ -281,7 +281,7 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
 	@Override
 	public void writeToStream(ByteBuf byteBuf) throws IOException {
-		byteBuf.writeBoolean(node != null && node.isActive() );
+		byteBuf.writeBoolean(this.node != null && this.node.isActive() );
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -320,7 +320,7 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
             if (this.node != null)
             {
-                this.node.setPlayerID(ownerID);
+                this.node.setPlayerID(this.ownerID);
                 this.node.updateState();
             }
 
@@ -338,8 +338,8 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 	@Override
 	public void setPartHostInfo(ForgeDirection forgeDirection, IPartHost iPartHost, TileEntity tileEntity)
 	{
-		cableSide = forgeDirection;
-		host = iPartHost;
+        this.cableSide = forgeDirection;
+        this.host = iPartHost;
 		this.TE = tileEntity;
 	}
 
