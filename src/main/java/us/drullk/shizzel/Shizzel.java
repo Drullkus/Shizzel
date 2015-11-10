@@ -12,7 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import us.drullk.shizzel.appEng.AppEng;
+import us.drullk.shizzel.appEng.AppEngHandler;
 import us.drullk.shizzel.forestry.Forestry;
 import us.drullk.shizzel.proxy.CommonProxy;
 
@@ -63,7 +63,7 @@ public class Shizzel {
 
         if (Loader.isModLoaded("appliedenergistics2"))
         {
-            AppEng.preInit();
+            AppEngHandler.preInit();
         }
 	}
 
