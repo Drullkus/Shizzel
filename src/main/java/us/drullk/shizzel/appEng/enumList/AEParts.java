@@ -12,7 +12,7 @@ import java.util.Map;
 
 public enum AEParts
 {
-    ArcaneCraftingTerminal("shizzel.appengparts.terminal.chiseling", PartChiselingTerminal.class, null);
+    PartChiselingTerminal("shizzel.appengparts.terminal.chiseling", PartChiselingTerminal.class, null);
 
     private String unlocalizedName;
 
@@ -79,5 +79,10 @@ public enum AEParts
     public String getGroupName()
     {
         return this.groupName;
+    }
+
+    public ItemStack getStack()
+    {
+        return AEItems.AEPartItem.getStackWithDamage(this.ordinal());
     }
 }

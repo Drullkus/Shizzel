@@ -27,6 +27,9 @@ public class Shizzel {
 
 	public static final Logger logger = LogManager.getLogger(MOD_NAME);
 
+    @Mod.Instance(value = Shizzel.MOD_ID)
+    public static Shizzel INSTANCE;
+
 	@Mod.Instance(MOD_ID)
 	public static Shizzel instance;
 

@@ -1,8 +1,11 @@
 package us.drullk.shizzel.utils;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import us.drullk.shizzel.Shizzel;
+import us.drullk.shizzel.appEng.AEPartAbstract;
 
 public class Helper {
 
@@ -90,5 +93,14 @@ public class Helper {
     public static boolean isPointInRegion(int top, int left, int height, int width, int pointX, int pointY)
     {
         return ( pointX >= left ) && ( pointX <= ( left + width ) ) && ( pointY >= top ) && ( pointY <= ( top + height ) );
+    }
+
+    public static void launchGui( final AEPartAbstract part, final EntityPlayer player, final World world, final int x, final int y, final int z )
+    {
+        // Ensure the player is allowed to open the gui
+        if( part.doesPlayerHavePermissionToOpenGui( player ) )
+        {
+            player.openGui( Shizzel.INSTANCE, part.getSide().ordinal(), world, x, y, z );
+        }
     }
 }

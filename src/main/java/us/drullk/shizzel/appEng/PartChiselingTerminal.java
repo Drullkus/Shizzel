@@ -11,7 +11,6 @@ import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.parts.IPartCollisionHelper;
 import appeng.api.parts.IPartRenderHelper;
-import appeng.api.parts.PartItemStack;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEFluidStack;
@@ -30,6 +29,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import us.drullk.shizzel.Shizzel;
+import us.drullk.shizzel.appEng.enumList.AEParts;
 import us.drullk.shizzel.container.appEng.ContainerChiselingTerminal;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     public PartChiselingTerminal()
     {
-        // Constructor
+        super( AEParts.PartChiselingTerminal);
     }
 
     private boolean isSlotSafe( final int slotRequest )

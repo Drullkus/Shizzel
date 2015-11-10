@@ -27,6 +27,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import us.drullk.shizzel.appEng.enumList.AEParts;
 import us.drullk.shizzel.utils.Helper;
 
 import java.io.IOException;
@@ -45,6 +46,13 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 	protected AEGridBlock gridBlock;
 	protected int ownerID = -1;
     protected double powerUsage;
+
+    public final ItemStack associatedItem;
+
+    public AEPartAbstract( final AEParts associatedPart )
+    {
+        this.associatedItem = associatedPart.getStack();
+    }
 
 	@MENetworkEventSubscribe
 	public void setPower(MENetworkPowerStatusChange statusChange)
@@ -130,7 +138,7 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 	}
 
 	@Override
-	public IGridNode getGridNode(ForgeDirection forgeDirection) {
+	public final IGridNode getGridNode(ForgeDirection forgeDirection) {
 		return this.node;
 	}
 
@@ -156,9 +164,26 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 	@Override
 	public ItemStack getItemStack(PartItemStack partItemStack)
 	{
-		//TODO: Figure this one out too.
+        // Get the itemstack
+        ItemStack itemStack = this.associatedItem.copy();
 
-		return null;
+        // Save NBT data if the part was wrenched or creatively picked
+        if( ( partItemStack == PartItemStack.Wrench ) || ( partItemStack == PartItemStack.Pick ) )
+        {
+            // Create the item tag
+            NBTTagCompound itemNBT = new NBTTagCompound();
+
+            // Write the data
+            this.writeToNBT( itemNBT );
+
+            // Set the tag
+            if( !itemNBT.hasNoTags() )
+            {
+                itemStack.setTagCompound( itemNBT );
+            }
+        }
+
+        return itemStack;
 	}
 
 	@Override
@@ -212,6 +237,8 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 		if (nbtTagCompound.hasKey("node") && node != null)
 		{
 			node.loadFromNBT("node0", nbtTagCompound.getCompoundTag("node"));
+
+            this.ownerID = nbtTagCompound.getInteger( "Owner" );
 
 			node.updateState();
 		}
@@ -291,11 +318,15 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
 			this.node = AEApi.instance().createGridNode(this.gridBlock);
 
-			this.node.updateState();
-
-			this.node.setPlayerID(this.ownerID);
+            if (this.node != null)
+            {
+                this.node.setPlayerID(ownerID);
+                this.node.updateState();
+            }
 
 			this.setPower(null);
+
+            onNeighborChanged();
 		}
 	}
 
@@ -314,8 +345,18 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost {
 
 	@Override
 	public boolean onActivate(EntityPlayer entityPlayer, Vec3 vec3) {
-		// TODO: Figure this one out too.
 
+        if( entityPlayer.isSneaking() )
+        {
+            return false;
+        }
+
+        // Is this server side?
+        if( Helper.isServerSide() )
+        {
+            // Launch the gui
+            Helper.launchGui( this, entityPlayer, this.TE.getWorldObj(), this.TE.xCoord, this.TE.yCoord, this.TE.zCoord );
+        }
 		return false;
 	}
 

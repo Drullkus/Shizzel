@@ -1,6 +1,7 @@
 package us.drullk.shizzel.appEng.enumList;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.appEng.ItemAEPart;
 
@@ -28,5 +29,10 @@ public enum AEItems
     public String getInternalName()
     {
         return this.name;
+    }
+
+    public ItemStack getStackWithDamage( final int damageValue )
+    {
+        return new ItemStack( this.item, 1, damageValue );
     }
 }
