@@ -107,7 +107,7 @@ public class AEGridBlock implements IGridBlock {
 	}
 
 	@Override public AEColor getGridColor() {
-		return this.color;
+		return (color != null ? color : AEColor.Transparent);
 	}
 
 	@Override public void onGridNotification(GridNotification gridNotification) {
