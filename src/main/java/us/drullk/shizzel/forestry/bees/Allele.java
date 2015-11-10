@@ -5,53 +5,65 @@ import forestry.api.apiculture.IAlleleBeeSpecies;
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IAllele;
 import forestry.api.genetics.IAlleleEffect;
-import net.minecraft.util.StatCollector;
 import us.drullk.shizzel.forestry.bees.alleles.AlleleEffectChisel;
 import us.drullk.shizzel.utils.Helper;
 
 public class Allele implements IAllele
 {
-	public static IAlleleBeeEffect forestryBaseEffect;
-	public static IAlleleEffect chiselGrief;
+    public static IAlleleBeeEffect forestryBaseEffect;
 
-	private String uid;
-	private boolean dominant;
+    public static IAlleleEffect chiselGrief;
 
-	public static void setupAdditionalAlleles() {
-		forestryBaseEffect = (IAlleleBeeEffect) getBaseAllele("effectNone");
+    private String uid;
 
-		chiselGrief = new AlleleEffectChisel("Chiseling", true, 1);
-	}
+    private boolean dominant;
 
-	public Allele(String id, boolean isDominant) {
-		this.uid = "shizzel." + id;
-		this.dominant = isDominant;
-		AlleleManager.alleleRegistry.registerAllele(this);
-	}
+    public static void setupAdditionalAlleles()
+    {
+        forestryBaseEffect = (IAlleleBeeEffect) getBaseAllele("effectNone");
 
-	public static IAlleleBeeSpecies getBaseSpecies(String name) {
-		return (IAlleleBeeSpecies) AlleleManager.alleleRegistry.getAllele((new StringBuilder()).append("forestry.species").append(name).toString());
-	}
+        chiselGrief = new AlleleEffectChisel("Chiseling", true, 1);
+    }
 
-	@Override public String getUID() {
-		return this.uid;
-	}
+    public Allele(String id, boolean isDominant)
+    {
+        this.uid = "shizzel." + id;
+        this.dominant = isDominant;
+        AlleleManager.alleleRegistry.registerAllele(this);
+    }
 
-	@Override public boolean isDominant() {
-		return this.dominant;
-	}
+    public static IAlleleBeeSpecies getBaseSpecies(String name)
+    {
+        return (IAlleleBeeSpecies) AlleleManager.alleleRegistry.getAllele((new StringBuilder()).append("forestry.species").append(name).toString());
+    }
 
-	@Override public String getName() {
-		return Helper.getLocalizedString(getUID());
-	}
+    @Override
+    public String getUID()
+    {
+        return this.uid;
+    }
 
-	@Override public String getUnlocalizedName() {
-		return this.uid;
-	}
+    @Override
+    public boolean isDominant()
+    {
+        return this.dominant;
+    }
 
-	//Helpers
-	public static IAllele getBaseAllele(String name)
-	{
-		return AlleleManager.alleleRegistry.getAllele("forestry." + name);
-	}
+    @Override
+    public String getName()
+    {
+        return Helper.getLocalizedString(this.getUID());
+    }
+
+    @Override
+    public String getUnlocalizedName()
+    {
+        return this.uid;
+    }
+
+    //Helpers
+    public static IAllele getBaseAllele(String name)
+    {
+        return AlleleManager.alleleRegistry.getAllele("forestry." + name);
+    }
 }

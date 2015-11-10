@@ -1,0 +1,40 @@
+# Compiled Java
+*.class
+
+# Eclipse
+.classpath
+.project
+.settings
+bin
+config
+crash-reports
+logs
+mod-config
+mods
+saves
+*.txt
+usernamecache.json
+
+# IntelliJ IDEA
+*.iml
+*.ipr
+*.iws
+.idea
+/out/
+classes
+
+# Gradle
+.gradle
+/build/
+/bin/
+/run/
+
+# Gradle Wrapper
+/gradle/wrapper/dists
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini

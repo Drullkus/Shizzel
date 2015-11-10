@@ -18,10 +18,15 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
     public static int VIEW_SLOT_XPOS = 206, VIEW_SLOT_YPOS = 8;
 
     private static int playerInvPosY = 85;
+
     private static int hotbarInvPosY = playerInvPosY + (renderSlotSize * 3) + 4;
+
     private PartChiselingTerminal chiselTerm;
+
     private EntityPlayer entityPlayer;
+
     private IMEMonitor<IAEItemStack> MEMonitor;
+
     private PlayerSource playerSource;
 
     public ContainerChiselingTerminal(PartChiselingTerminal chiselingTerminal, EntityPlayer player)
@@ -34,13 +39,13 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
 
         //TODO:Setup more chisel stuffs
 
-        if(Helper.isServerSide())
+        if (Helper.isServerSide())
         {
             this.registerForUpdates();
 
             this.MEMonitor = chiselingTerminal.getItemInventory();
 
-            if(this.MEMonitor != null)
+            if (this.MEMonitor != null)
             {
                 this.MEMonitor.addListener(this, null);
             }
@@ -53,21 +58,22 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
     }
 
     @Override
-    public ItemStack slotClick(int slot, int button, int flag, EntityPlayer player) {
+    public ItemStack slotClick(int slot, int button, int flag, EntityPlayer player)
+    {
         return super.slotClick(slot, button, flag, player);
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int slotNumber )
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotNumber)
     {
-        if(Helper.isClientSide())
+        if (Helper.isClientSide())
         {
             return null;
         }
 
-        Slot slot = (Slot)this.inventorySlots.get( slotNumber );
+        Slot slot = (Slot) this.inventorySlots.get(slotNumber);
 
-        if( ( slot != null ) && ( slot.getHasStack() ) )
+        if ((slot != null) && (slot.getHasStack()))
         {
             boolean didMerge = false;
 
@@ -80,36 +86,39 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer entityPlayer) {
+    public boolean canInteractWith(EntityPlayer entityPlayer)
+    {
         return true;
     }
 
     @Override
-    public boolean isValid(Object o) {
+    public boolean isValid(Object o)
+    {
         return true;
     }
 
     @Override
-    public void postChange(IBaseMonitor<IAEItemStack> iBaseMonitor, Iterable<IAEItemStack> iterable, BaseActionSource baseActionSource) {
-        for( IAEItemStack change : iterable )
+    public void postChange(IBaseMonitor<IAEItemStack> iBaseMonitor, Iterable<IAEItemStack> iterable, BaseActionSource baseActionSource)
+    {
+        for (IAEItemStack change : iterable)
         {
             IAEItemStack newAmount = this.MEMonitor.getStorageList().findPrecise(change);
 
-            if( newAmount == null )
+            if (newAmount == null)
             {
                 newAmount = change.copy();
 
-                newAmount.setStackSize( 0 );
+                newAmount.setStackSize(0);
             }
 
-            new PacketChiselingTerminalClient().createChangeUpdate( this.entityPlayer, newAmount ).sendPacketToPlayer();
+            new PacketChiselingTerminalClient().createChangeUpdate(this.entityPlayer, newAmount).sendPacketToPlayer();
         }
     }
 
     @Override
-    public void onListUpdate() {
+    public void onListUpdate()
+    {
         //Useless
     }
-
 
 }

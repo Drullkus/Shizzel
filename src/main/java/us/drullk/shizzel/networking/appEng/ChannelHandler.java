@@ -21,13 +21,13 @@ public class ChannelHandler
         wrapper.sendToAllAround(packet, p);
     }
 
-    public static void sendPacketToPlayer( final AbstractPacket packet, final EntityPlayer player )
+    public static void sendPacketToPlayer(final AbstractPacket packet, final EntityPlayer player)
     {
-        wrapper.sendTo( packet, (EntityPlayerMP)player );
+        wrapper.sendTo(packet, (EntityPlayerMP) player);
     }
 
-    public static void sendPacketToServer( final AbstractPacket packet )
+    public static void sendPacketToServer(final AbstractPacket packet)
     {
-        wrapper.sendToServer( packet );
+        wrapper.sendToServer(packet);
     }
 }

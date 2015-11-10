@@ -4,13 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
-
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.oredict.OreDictionary;
 import forestry.api.apiculture.IAlleleBeeSpecies;
 import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeHousing;
@@ -19,297 +12,354 @@ import forestry.api.apiculture.IBeeMutation;
 import forestry.api.apiculture.IBeeRoot;
 import forestry.api.genetics.IAllele;
 import forestry.api.genetics.IAlleleSpecies;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.oredict.OreDictionary;
 import us.drullk.shizzel.utils.Helper;
 
-public class BeeMutation implements IBeeMutation {
+public class BeeMutation implements IBeeMutation
+{
 
-	public static void setupMutations()
-	{
-		IAlleleBeeSpecies baseA, baseB;
-		BeeMutation mutation;
+    public static void setupMutations()
+    {
+        IAlleleBeeSpecies baseA, baseB;
+        BeeMutation mutation;
 
-		new BeeMutation(Allele.getBaseSpecies("Industrious"), Allele.getBaseSpecies("Steadfast"), BeeSpecies.CHISEL, 10);
-	}
+        new BeeMutation(Allele.getBaseSpecies("Industrious"), Allele.getBaseSpecies("Steadfast"), BeeSpecies.CHISEL, 10);
+    }
 
-	private IAlleleSpecies parent1;
-	private IAlleleSpecies parent2;
-	private IAllele mutationTemplate[];
-	private int baseChance;
-	private boolean isSecret;
-	private boolean isMoonRestricted;
-	//private Helper.MoonPhase moonPhaseStart;
-	//private Helper.MoonPhase moonPhaseEnd;
-	private float moonPhaseMutationBonus;
-	private boolean requiresNight;
-	private boolean requiresBlock;
-	private Block requiredBlock;
-	private int requiredBlockMeta;
-	private String requiredBlockOreDictEntry;
-	private String requiredBlockName;
-	private BiomeDictionary.Type requiredBiomeType;
+    private IAlleleSpecies parent1;
 
-	public BeeMutation(IAlleleBeeSpecies species0, IAlleleBeeSpecies species1, BeeSpecies resultSpecies, int percentChance) {
-		this(species0, species1, resultSpecies.getGenome(), percentChance);
-	}
+    private IAlleleSpecies parent2;
 
-	public BeeMutation(IAlleleBeeSpecies species0, IAlleleBeeSpecies species1, IAllele[] resultSpeciesGenome, int percentChance) {
-		this.parent1 = species0;
-		this.parent2 = species1;
-		this.mutationTemplate = resultSpeciesGenome;
-		this.baseChance = percentChance;
-		this.isSecret = false;
-		this.isMoonRestricted = false;
-		this.moonPhaseMutationBonus = -1f;
-		this.requiresNight = false;
-		this.requiresBlock = false;
-		this.requiredBlockMeta = OreDictionary.WILDCARD_VALUE;
-		this.requiredBlockOreDictEntry = null;
-		this.requiredBiomeType = null;
-		this.requiredBlockName = null;
+    private IAllele mutationTemplate[];
 
-		BeeManager.beeRoot.registerMutation(this);
-	}
+    private int baseChance;
 
-	@Override
-	public float getChance(IBeeHousing housing, IAlleleBeeSpecies allele0, IAlleleBeeSpecies allele1, IBeeGenome genome0, IBeeGenome genome1) {
-		float finalChance = 0f;
-		float chance = this.baseChance * 1f;
-		ChunkCoordinates housingCoords = housing.getCoordinates();
+    private boolean isSecret;
 
-		if (this.arePartners(allele0, allele1)) {
-			// This mutation applies. Continue calculation.
-			/*if (this.moonPhaseStart != null && this.moonPhaseEnd != null) {
-				// Only occurs during the phases.
-				if (this.isMoonRestricted && !Helper.MoonPhase.getMoonPhase(housing.getWorld()).isBetween(this.moonPhaseStart, this.moonPhaseEnd)) {
-					chance = 0;
-				}
-				else if (this.moonPhaseMutationBonus != -1f) {
-					// There is a bonus to this mutation during moon phases...
-					if (Helper.MoonPhase.getMoonPhase(housing.getWorld()).isBetween(this.moonPhaseStart, this.moonPhaseEnd)) {
-						chance = (int)(chance * this.moonPhaseMutationBonus);
-					}
-				}
-			}//*/
+    private boolean requiresNight;
 
-			if (this.requiresBlock) {
-				Block blockBelow;
-				int blockMeta;
-				int i = 1;
-				do {
-					blockBelow = housing.getWorld().getBlock(housingCoords.posX, housingCoords.posY - i, housingCoords.posZ);
-					blockMeta = housing.getWorld().getBlockMetadata(housingCoords.posX, housingCoords.posY - i, housingCoords.posZ);
-					++i;
-				}
-				while (blockBelow != null && (blockBelow instanceof IBeeHousing || blockBelow == GameRegistry.findBlock("Forestry", "alveary")));
+    private boolean requiresBlock;
 
-				if (this.requiredBlockOreDictEntry != null) {
-					int[] dicId = OreDictionary.getOreIDs(new ItemStack(blockBelow, 1, blockMeta));
-					if (dicId.length != 0) {
-						if (!OreDictionary.getOreName(dicId[0]).equals(this.requiredBlockOreDictEntry)) {
-							chance = 0;
-						}
-					}
-					else {
-						chance = 0;
-					}
-				}
-				else if (this.requiredBlock != blockBelow ||
-						(this.requiredBlockMeta != OreDictionary.WILDCARD_VALUE && this.requiredBlockMeta != blockMeta)) {
-					chance = 0;
-				}
-			}
+    private Block requiredBlock;
 
-			if (this.requiredBiomeType != null) {
-				BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(housing.getWorld().getBiomeGenForCoords(housingCoords.posX, housingCoords.posZ));
-				boolean found = false;
-				for (Type type : types) {
-					if (this.requiredBiomeType == type) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					chance = 0;
-				}
-			}
+    private int requiredBlockMeta;
 
-			if (this.requiresNight) {
-				if (!housing.getWorld().isDaytime()) {
-					chance = 0;
-				}
-			}
+    private String requiredBlockOreDictEntry;
 
-			IBeeModifier housingBeeModifier = BeeManager.beeRoot.createBeeHousingModifier(housing);
-			IBeeModifier modeBeeModifier = BeeManager.beeRoot.getBeekeepingMode(housing.getWorld()).getBeeModifier();
+    private String requiredBlockName;
 
-			finalChance = Math.round(chance
-					* housingBeeModifier.getMutationModifier(genome0, genome1, chance)
-					* modeBeeModifier.getMutationModifier(genome0, genome1, chance));
-		}
+    private BiomeDictionary.Type requiredBiomeType;
 
-		return finalChance;
-	}
+    public BeeMutation(IAlleleBeeSpecies species0, IAlleleBeeSpecies species1, BeeSpecies resultSpecies, int percentChance)
+    {
+        this(species0, species1, resultSpecies.getGenome(), percentChance);
+    }
 
-	@Override
-	public IAlleleSpecies getAllele0() {
-		return parent1;
-	}
+    public BeeMutation(IAlleleBeeSpecies species0, IAlleleBeeSpecies species1, IAllele[] resultSpeciesGenome, int percentChance)
+    {
+        this.parent1 = species0;
+        this.parent2 = species1;
+        this.mutationTemplate = resultSpeciesGenome;
+        this.baseChance = percentChance;
+        this.isSecret = false;
+        this.requiresNight = false;
+        this.requiresBlock = false;
+        this.requiredBlockMeta = OreDictionary.WILDCARD_VALUE;
+        this.requiredBlockOreDictEntry = null;
+        this.requiredBiomeType = null;
+        this.requiredBlockName = null;
 
-	@Override
-	public IAlleleSpecies getAllele1() {
-		return parent2;
-	}
+        BeeManager.beeRoot.registerMutation(this);
+    }
 
-	@Override
-	public IAllele[] getTemplate() {
-		return mutationTemplate;
-	}
+    @Override
+    public float getChance(IBeeHousing housing, IAlleleBeeSpecies allele0, IAlleleBeeSpecies allele1, IBeeGenome genome0, IBeeGenome genome1)
+    {
+        float finalChance = 0f;
+        float chance = this.baseChance * 1f;
+        ChunkCoordinates housingCoords = housing.getCoordinates();
 
-	@Override
-	public float getBaseChance() {
-		return baseChance;
-	}
+        if (this.arePartners(allele0, allele1))
+        {
+            // This mutation applies. Continue calculation.
+            /*if (this.moonPhaseStart != null && this.moonPhaseEnd != null) {
+            	// Only occurs during the phases.
+            	if (this.isMoonRestricted && !Helper.MoonPhase.getMoonPhase(housing.getWorld()).isBetween(this.moonPhaseStart, this.moonPhaseEnd)) {
+            		chance = 0;
+            	}
+            	else if (this.moonPhaseMutationBonus != -1f) {
+            		// There is a bonus to this mutation during moon phases...
+            		if (Helper.MoonPhase.getMoonPhase(housing.getWorld()).isBetween(this.moonPhaseStart, this.moonPhaseEnd)) {
+            			chance = (int)(chance * this.moonPhaseMutationBonus);
+            		}
+            	}
+            }//*/
 
-	@Override
-	public boolean isPartner(IAllele allele) {
-		return parent1.getUID().equals(allele.getUID()) || parent2.getUID().equals(allele.getUID());
-	}
+            if (this.requiresBlock)
+            {
+                Block blockBelow;
+                int blockMeta;
+                int i = 1;
+                do
+                {
+                    blockBelow = housing.getWorld().getBlock(housingCoords.posX, housingCoords.posY - i, housingCoords.posZ);
+                    blockMeta = housing.getWorld().getBlockMetadata(housingCoords.posX, housingCoords.posY - i, housingCoords.posZ);
+                    ++i;
+                }
+                while (blockBelow != null && (blockBelow instanceof IBeeHousing || blockBelow == GameRegistry.findBlock("Forestry", "alveary")));
 
-	@Override
-	public IAllele getPartner(IAllele allele) {
-		IAllele val = parent1;
-		if (val.getUID().equals(allele.getUID()))
-			val = parent2;
-		return val;
-	}
+                if (this.requiredBlockOreDictEntry != null)
+                {
+                    int[] dicId = OreDictionary.getOreIDs(new ItemStack(blockBelow, 1, blockMeta));
+                    if (dicId.length != 0)
+                    {
+                        if (!OreDictionary.getOreName(dicId[0]).equals(this.requiredBlockOreDictEntry))
+                        {
+                            chance = 0;
+                        }
+                    }
+                    else
+                    {
+                        chance = 0;
+                    }
+                }
+                else if (this.requiredBlock != blockBelow ||
+                        (this.requiredBlockMeta != OreDictionary.WILDCARD_VALUE && this.requiredBlockMeta != blockMeta))
+                {
+                    chance = 0;
+                }
+            }
 
-	@Override
-	public Collection<String> getSpecialConditions() {
-		ArrayList<String> conditions = new ArrayList<String>();
+            if (this.requiredBiomeType != null)
+            {
+                BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(housing.getWorld().getBiomeGenForCoords(housingCoords.posX, housingCoords.posZ));
+                boolean found = false;
+                for (Type type : types)
+                {
+                    if (this.requiredBiomeType == type)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    chance = 0;
+                }
+            }
 
-		/*if (this.isMoonRestricted && moonPhaseStart != null && moonPhaseEnd != null) {
-			if (moonPhaseStart != moonPhaseEnd) {
-				conditions.add(String.format(Helper.getLocalizedString("research.requiresPhase"),
-						moonPhaseStart.getLocalizedNameAlt(), moonPhaseEnd.getLocalizedNameAlt()));
-			}
-			else {
-				conditions.add(String.format(Helper.getLocalizedString("research.requiresPhaseSingle"),
-						moonPhaseStart.getLocalizedName()));
-			}
-		}//*/
+            if (this.requiresNight)
+            {
+                if (!housing.getWorld().isDaytime())
+                {
+                    chance = 0;
+                }
+            }
 
-		if (this.requiresBlock) {
-			if (this.requiredBlockName != null) {
-				conditions.add(String.format(Helper.getLocalizedString("research.requiresBlock"),
-						Helper.getLocalizedString(this.requiredBlockName)));
-			}
-			else if (this.requiredBlockOreDictEntry != null) {
-				ArrayList<ItemStack> ores = OreDictionary.getOres(this.requiredBlockOreDictEntry);
-				if (ores != null && 0 < ores.size()) {
-					String displayName = ores.get(0).getDisplayName();
-					conditions.add(String.format(Helper.getLocalizedString("research.requiresBlock"), displayName));
-				}
-			}
-			else if (this.requiredBlock != null) {
-				int meta = OreDictionary.WILDCARD_VALUE;
-				if (this.requiredBlockMeta != OreDictionary.WILDCARD_VALUE) {
-					meta = this.requiredBlockMeta;
-				}
-				String displayName = new ItemStack(this.requiredBlock, 1, meta).getDisplayName();
-				conditions.add(String.format(Helper.getLocalizedString("research.requiresBlock"), displayName));
-			}
-		}
+            IBeeModifier housingBeeModifier = BeeManager.beeRoot.createBeeHousingModifier(housing);
+            IBeeModifier modeBeeModifier = BeeManager.beeRoot.getBeekeepingMode(housing.getWorld()).getBeeModifier();
 
-		if (this.requiredBiomeType != null) {
-			String biomeName = this.requiredBiomeType.name().substring(0, 1) + this.requiredBiomeType.name().substring(1).toLowerCase();
-			conditions.add(String.format(Helper.getLocalizedString("research.requiresBiome"), biomeName));
-		}
+            finalChance = Math.round(chance
+                    * housingBeeModifier.getMutationModifier(genome0, genome1, chance)
+                    * modeBeeModifier.getMutationModifier(genome0, genome1, chance));
+        }
 
-		if (this.requiresNight) {
-			conditions.add(Helper.getLocalizedString("research.requiresNight"));
-		}
+        return finalChance;
+    }
 
-		return conditions;
-	}
+    @Override
+    public IAlleleSpecies getAllele0()
+    {
+        return this.parent1;
+    }
 
-	@Override
-	public IBeeRoot getRoot() {
-		return BeeManager.beeRoot;
-	}
+    @Override
+    public IAlleleSpecies getAllele1()
+    {
+        return this.parent2;
+    }
 
-	public boolean arePartners(IAllele alleleA, IAllele alleleB) {
-		return (this.parent1.getUID().equals(alleleA.getUID())) && this.parent2.getUID().equals(alleleB.getUID()) ||
-				this.parent1.getUID().equals(alleleB.getUID()) && this.parent2.getUID().equals(alleleA.getUID());
-	}
+    @Override
+    public IAllele[] getTemplate()
+    {
+        return this.mutationTemplate;
+    }
 
-	public BeeMutation setSecret() {
-		this.isSecret = true;
+    @Override
+    public float getBaseChance()
+    {
+        return this.baseChance;
+    }
 
-		return this;
-	}
+    @Override
+    public boolean isPartner(IAllele allele)
+    {
+        return this.parent1.getUID().equals(allele.getUID()) || this.parent2.getUID().equals(allele.getUID());
+    }
 
-	public boolean isSecret() {
-		return isSecret;
-	}
+    @Override
+    public IAllele getPartner(IAllele allele)
+    {
+        IAllele val = this.parent1;
+        if (val.getUID().equals(allele.getUID()))
+        {
+            val = this.parent2;
+        }
+        return val;
+    }
 
-	public BeeMutation setBlockRequired(Block block) {
-		this.requiresBlock = true;
-		this.requiredBlock = block;
+    @Override
+    public Collection<String> getSpecialConditions()
+    {
+        ArrayList<String> conditions = new ArrayList<String>();
 
-		return this;
-	}
+        /*if (this.isMoonRestricted && moonPhaseStart != null && moonPhaseEnd != null) {
+        	if (moonPhaseStart != moonPhaseEnd) {
+        		conditions.add(String.format(Helper.getLocalizedString("research.requiresPhase"),
+        				moonPhaseStart.getLocalizedNameAlt(), moonPhaseEnd.getLocalizedNameAlt()));
+        	}
+        	else {
+        		conditions.add(String.format(Helper.getLocalizedString("research.requiresPhaseSingle"),
+        				moonPhaseStart.getLocalizedName()));
+        	}
+        }//*/
 
-	public BeeMutation setBlockAndMetaRequired(Block block, int meta) {
-		this.requiresBlock = true;
-		this.requiredBlock = block;
-		this.requiredBlockMeta = meta;
+        if (this.requiresBlock)
+        {
+            if (this.requiredBlockName != null)
+            {
+                conditions.add(String.format(Helper.getLocalizedString("research.requiresBlock"),
+                        Helper.getLocalizedString(this.requiredBlockName)));
+            }
+            else if (this.requiredBlockOreDictEntry != null)
+            {
+                ArrayList<ItemStack> ores = OreDictionary.getOres(this.requiredBlockOreDictEntry);
+                if (ores != null && 0 < ores.size())
+                {
+                    String displayName = ores.get(0).getDisplayName();
+                    conditions.add(String.format(Helper.getLocalizedString("research.requiresBlock"), displayName));
+                }
+            }
+            else if (this.requiredBlock != null)
+            {
+                int meta = OreDictionary.WILDCARD_VALUE;
+                if (this.requiredBlockMeta != OreDictionary.WILDCARD_VALUE)
+                {
+                    meta = this.requiredBlockMeta;
+                }
+                String displayName = new ItemStack(this.requiredBlock, 1, meta).getDisplayName();
+                conditions.add(String.format(Helper.getLocalizedString("research.requiresBlock"), displayName));
+            }
+        }
 
-		return this;
-	}
+        if (this.requiredBiomeType != null)
+        {
+            String biomeName = this.requiredBiomeType.name().substring(0, 1) + this.requiredBiomeType.name().substring(1).toLowerCase();
+            conditions.add(String.format(Helper.getLocalizedString("research.requiresBiome"), biomeName));
+        }
 
-	public BeeMutation setBlockRequired(String oreDictEntry) {
-		this.requiresBlock = true;
-		this.requiredBlockOreDictEntry = oreDictEntry;
+        if (this.requiresNight)
+        {
+            conditions.add(Helper.getLocalizedString("research.requiresNight"));
+        }
 
-		return this;
-	}
+        return conditions;
+    }
 
-	public BeeMutation setBlockRequiredNameOverride(String blockName) {
-		this.requiredBlockName = blockName;
+    @Override
+    public IBeeRoot getRoot()
+    {
+        return BeeManager.beeRoot;
+    }
 
-		return this;
-	}
+    public boolean arePartners(IAllele alleleA, IAllele alleleB)
+    {
+        return (this.parent1.getUID().equals(alleleA.getUID())) && this.parent2.getUID().equals(alleleB.getUID()) ||
+                this.parent1.getUID().equals(alleleB.getUID()) && this.parent2.getUID().equals(alleleA.getUID());
+    }
 
-	/*public BeeMutation setMoonPhaseRestricted(Helper.MoonPhase phase) {
-		setMoonPhaseRestricted(phase, phase);
-		return this;
-	}
+    public BeeMutation setSecret()
+    {
+        this.isSecret = true;
 
-	public BeeMutation setMoonPhaseRestricted(Helper.MoonPhase begin, Helper.MoonPhase end) {
-		this.isMoonRestricted = true;
-		this.moonPhaseStart = begin;
-		this.moonPhaseEnd = end;
+        return this;
+    }
 
-		return this;
-	}
+    @Override
+    public boolean isSecret()
+    {
+        return this.isSecret;
+    }
 
-	public BeeMutation setMoonPhaseBonus(Helper.MoonPhase begin, Helper.MoonPhase end, float mutationBonus) {
-		this.moonPhaseMutationBonus = mutationBonus;
-		this.moonPhaseStart = begin;
-		this.moonPhaseEnd = end;
+    public BeeMutation setBlockRequired(Block block)
+    {
+        this.requiresBlock = true;
+        this.requiredBlock = block;
 
-		return this;
-	}//*/
+        return this;
+    }
 
-	public BeeMutation setBiomeRequired(BiomeDictionary.Type biomeType) {
-		this.requiredBiomeType = biomeType;
+    public BeeMutation setBlockAndMetaRequired(Block block, int meta)
+    {
+        this.requiresBlock = true;
+        this.requiredBlock = block;
+        this.requiredBlockMeta = meta;
 
-		return this;
-	}
+        return this;
+    }
 
-	public BeeMutation setRequiresNight() {
-		this.requiresNight = true;
+    public BeeMutation setBlockRequired(String oreDictEntry)
+    {
+        this.requiresBlock = true;
+        this.requiredBlockOreDictEntry = oreDictEntry;
 
-		return this;
-	}
+        return this;
+    }
+
+    public BeeMutation setBlockRequiredNameOverride(String blockName)
+    {
+        this.requiredBlockName = blockName;
+
+        return this;
+    }
+
+    /*public BeeMutation setMoonPhaseRestricted(Helper.MoonPhase phase) {
+    	setMoonPhaseRestricted(phase, phase);
+    	return this;
+    }
+
+    public BeeMutation setMoonPhaseRestricted(Helper.MoonPhase begin, Helper.MoonPhase end) {
+    	this.isMoonRestricted = true;
+    	this.moonPhaseStart = begin;
+    	this.moonPhaseEnd = end;
+
+    	return this;
+    }
+
+    public BeeMutation setMoonPhaseBonus(Helper.MoonPhase begin, Helper.MoonPhase end, float mutationBonus) {
+    	this.moonPhaseMutationBonus = mutationBonus;
+    	this.moonPhaseStart = begin;
+    	this.moonPhaseEnd = end;
+
+    	return this;
+    }//*/
+
+    public BeeMutation setBiomeRequired(BiomeDictionary.Type biomeType)
+    {
+        this.requiredBiomeType = biomeType;
+
+        return this;
+    }
+
+    public BeeMutation setRequiresNight()
+    {
+        this.requiresNight = true;
+
+        return this;
+    }
 }

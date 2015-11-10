@@ -10,6 +10,7 @@ public enum AEItems
     AEPartItem("part.base", new ItemAEPart());
 
     private final String name;
+
     private Item item;
 
     AEItems(String name, Item item)
@@ -31,8 +32,8 @@ public enum AEItems
         return this.name;
     }
 
-    public ItemStack getStackWithDamage( final int damageValue )
+    public ItemStack getStackWithDamage(final int damageValue)
     {
-        return new ItemStack( this.item, 1, damageValue );
+        return new ItemStack(this.item, 1, damageValue);
     }
 }

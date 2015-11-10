@@ -1,6 +1,13 @@
 package us.drullk.shizzel.appEng;
 
-import appeng.api.networking.*;
+import java.util.EnumSet;
+
+import appeng.api.networking.GridFlags;
+import appeng.api.networking.GridNotification;
+import appeng.api.networking.IGrid;
+import appeng.api.networking.IGridBlock;
+import appeng.api.networking.IGridHost;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.energy.IEnergyGrid;
 import appeng.api.networking.security.ISecurityGrid;
 import appeng.api.networking.storage.IStorageGrid;
@@ -12,25 +19,23 @@ import appeng.api.util.DimensionalCoord;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.EnumSet;
+public class AEGridBlock implements IGridBlock
+{
 
-public class AEGridBlock implements IGridBlock {
+    private AEPartAbstract part;
 
-	private AEPartAbstract part;
-	private AEColor color;
-	private IGrid grid;
-	private int usedChannels;
+    private AEColor color;
 
-	public AEGridBlock(AEPartAbstract partAbstract)
-	{
-		this.part = partAbstract;
-	}
+    public AEGridBlock(AEPartAbstract partAbstract)
+    {
+        this.part = partAbstract;
+    }
 
     public IMEMonitor<IAEItemStack> getItemMonitor()
     {
         IStorageGrid storageGrid = this.getStorageGrid();
 
-        if(storageGrid == null)
+        if (storageGrid == null)
         {
             return null;
         }
@@ -42,19 +47,19 @@ public class AEGridBlock implements IGridBlock {
     {
         IGrid grid = this.getGrid();
 
-        if(grid == null)
+        if (grid == null)
         {
             return null;
         }
 
-        return (IStorageGrid)grid.getCache(IStorageGrid.class);
+        return (IStorageGrid) grid.getCache(IStorageGrid.class);
     }
 
     public final IGrid getGrid()
     {
         IGridNode node = this.part.getGridNode();
 
-        if(node != null)
+        if (node != null)
         {
             return node.getGrid();
         }
@@ -66,73 +71,91 @@ public class AEGridBlock implements IGridBlock {
     {
         IGrid grid = this.getGrid();
 
-        if( grid == null )
+        if (grid == null)
         {
             return null;
         }
 
-        return (ISecurityGrid)grid.getCache( ISecurityGrid.class );
+        return (ISecurityGrid) grid.getCache(ISecurityGrid.class);
     }
 
-	public IEnergyGrid getEnergyGrid()
-	{
-		// Get the grid
-		IGrid grid = this.getGrid();
+    public IEnergyGrid getEnergyGrid()
+    {
+        // Get the grid
+        IGrid grid = this.getGrid();
 
-		// Ensure we have a grid
-		if( grid == null )
-		{
-			return null;
-		}
+        // Ensure we have a grid
+        if (grid == null)
+        {
+            return null;
+        }
 
-		// Return the energy grid
-		return grid.getCache( IEnergyGrid.class );
-	}
+        // Return the energy grid
+        return grid.getCache(IEnergyGrid.class);
+    }
 
-	@Override
-	public double getIdlePowerUsage() {
-		return this.part.getPowerUsage();
-	}
+    @Override
+    public double getIdlePowerUsage()
+    {
+        return this.part.getPowerUsage();
+    }
 
-	@Override public EnumSet<GridFlags> getFlags() {
-		return EnumSet.of(GridFlags.REQUIRE_CHANNEL);
-	}
+    @Override
+    public EnumSet<GridFlags> getFlags()
+    {
+        return EnumSet.of(GridFlags.REQUIRE_CHANNEL);
+    }
 
-	@Override public boolean isWorldAccessible() {
-		return false;
-	}
+    @Override
+    public boolean isWorldAccessible()
+    {
+        return false;
+    }
 
-	@Override public DimensionalCoord getLocation() {
-		return this.part.getLocation();
-	}
+    @Override
+    public DimensionalCoord getLocation()
+    {
+        return this.part.getLocation();
+    }
 
-	@Override public AEColor getGridColor() {
-		return (this.color != null ? this.color : AEColor.Transparent);
-	}
+    @Override
+    public AEColor getGridColor()
+    {
+        return (this.color != null ? this.color : AEColor.Transparent);
+    }
 
-	@Override public void onGridNotification(GridNotification gridNotification) {
+    @Override
+    public void onGridNotification(GridNotification gridNotification)
+    {
 
-	}
+    }
 
-	@Override public void setNetworkStatus(IGrid iGrid, int i)
-	{
-		this.grid = iGrid;
-		this.usedChannels = i;
-	}
+    @Override
+    public void setNetworkStatus(IGrid iGrid, int i)
+    {
+    }
 
-	@Override public EnumSet<ForgeDirection> getConnectableSides() {
-		return EnumSet.noneOf( ForgeDirection.class );
-	}
+    @Override
+    public EnumSet<ForgeDirection> getConnectableSides()
+    {
+        return EnumSet.noneOf(ForgeDirection.class);
+    }
 
-	@Override public IGridHost getMachine() {
-		return this.part;
-	}
+    @Override
+    public IGridHost getMachine()
+    {
+        return this.part;
+    }
 
-	@Override public void gridChanged() {
+    @Override
+    public void gridChanged()
+    {
 
-	}
+    }
 
-	@Override public ItemStack getMachineRepresentation() {
-		return this.part.getItemStack(PartItemStack.Network);
-	}
+    @Override
+    public ItemStack getMachineRepresentation()
+    {
+        return this.part.getItemStack(PartItemStack.Network);
+    }
 }

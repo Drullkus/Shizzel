@@ -4,6 +4,6 @@ public abstract class AbstractPacketServer extends AbstractPacket
 {
     public void sendPacketToServer()
     {
-        ChannelHandler.sendPacketToServer( this );
+        ChannelHandler.sendPacketToServer(this);
     }
 }

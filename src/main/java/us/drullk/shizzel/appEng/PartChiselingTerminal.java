@@ -1,5 +1,8 @@
 package us.drullk.shizzel.appEng;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import appeng.api.config.SecurityPermissions;
 import appeng.api.config.SortDir;
 import appeng.api.config.SortOrder;
@@ -32,25 +35,32 @@ import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.appEng.enumList.AEParts;
 import us.drullk.shizzel.container.appEng.ContainerChiselingTerminal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PartChiselingTerminal extends AEPartAbstractRotateable implements IInventory, IGridTickable, ITerminalHost
 {
     private static int invSize = 1;
+
     private static String NBTTagInv = "ShizzelAEInv";
+
     private static String NBTTagSlot = "Slot#";
+
     private static String NBTTagSortOrder = "SortOrder";
+
     private static String NBTTagSortDirection = "SortDirection";
+
     private static String NBTTagViewMode = "ViewMode";
+
     private static double powerDrain = 0.5D;
 
     private static SortOrder defSortOrder = SortOrder.NAME;
+
     private static SortDir defSortDirection = SortDir.ASCENDING;
+
     private static ViewItems defViewItems = ViewItems.ALL;
 
     private SortOrder sortOrder = PartChiselingTerminal.defSortOrder;
+
     private SortDir sortDirection = PartChiselingTerminal.defSortDirection;
+
     private ViewItems viewMode = PartChiselingTerminal.defViewItems;
 
     private ItemStack[] slots = new ItemStack[PartChiselingTerminal.invSize];
@@ -59,13 +69,13 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     public PartChiselingTerminal()
     {
-        super( AEParts.PartChiselingTerminal);
+        super(AEParts.PartChiselingTerminal);
     }
 
-    private boolean isSlotSafe( final int slotRequest )
+    private boolean isSlotSafe(final int slotRequest)
     {
         // Condition whether it's safe to get an item or no.
-        return(( slotRequest >= 0) && (slotRequest < PartChiselingTerminal.invSize));
+        return ((slotRequest >= 0) && (slotRequest < PartChiselingTerminal.invSize));
     }
 
     @Override
@@ -85,27 +95,32 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public IIcon getBreakingTexture() {
+    public IIcon getBreakingTexture()
+    {
         return null; //TODO: Make texture for default breaking particles
     }
 
     @Override
-    public int cableConnectionRenderTo() {
+    public int cableConnectionRenderTo()
+    {
         return 3;
     }
 
     @Override
-    public void getBoxes(IPartCollisionHelper iPartCollisionHelper) {
+    public void getBoxes(IPartCollisionHelper iPartCollisionHelper)
+    {
         //TODO: Collision Boxes
     }
 
     @Override
-    public IConfigManager getConfigManager() {
+    public IConfigManager getConfigManager()
+    {
         return null; // Useless
     }
 
     @Override
-    public TickingRequest getTickingRequest(IGridNode iGridNode) {
+    public TickingRequest getTickingRequest(IGridNode iGridNode)
+    {
         return new TickingRequest(2, 20, false, false); // Every 2 to 20 MC ticks
     }
 
@@ -118,13 +133,15 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public int getSizeInventory() {
+    public int getSizeInventory()
+    {
         return PartChiselingTerminal.invSize;
     }
 
     @Override
-    public ItemStack getStackInSlot(int slotRequest) {
-        return (isSlotSafe(slotRequest) ? this.slots[slotRequest] : null);
+    public ItemStack getStackInSlot(int slotRequest)
+    {
+        return (this.isSlotSafe(slotRequest) ? this.slots[slotRequest] : null);
     }
 
     @Override
@@ -133,7 +150,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
         ItemStack returnedStack = null;
 
         // Prevent AOBE with slot array
-        if (isSlotSafe(slotRequest))
+        if (this.isSlotSafe(slotRequest))
         {
             ItemStack stackInSlot = this.slots[slotRequest];
 
@@ -151,7 +168,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
                     returnedStack = stackInSlot.splitStack(amount);
                 }
 
-                if( this.slots[slotRequest].stackSize == 0 )
+                if (this.slots[slotRequest].stackSize == 0)
                 {
                     this.slots[slotRequest] = null;
                 }
@@ -164,14 +181,15 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slotRequest) {
-        return (isSlotSafe(slotRequest) ? this.slots[slotRequest] : null);
+    public ItemStack getStackInSlotOnClosing(int slotRequest)
+    {
+        return (this.isSlotSafe(slotRequest) ? this.slots[slotRequest] : null);
     }
 
     @Override
     public void setInventorySlotContents(int slotRequest, ItemStack stackInSlot)
     {
-        if (setInventorySlotContentsNoListener(slotRequest, stackInSlot))
+        if (this.setInventorySlotContentsNoListener(slotRequest, stackInSlot))
         {
             this.notifyListeners(slotRequest);
         }
@@ -179,7 +197,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     public boolean setInventorySlotContentsNoListener(int slotRequest, ItemStack stackInSlot)
     {
-        if(isSlotSafe(slotRequest))
+        if (this.isSlotSafe(slotRequest))
         {
             this.slots[slotRequest] = stackInSlot;
 
@@ -197,46 +215,53 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public String getInventoryName() {
+    public String getInventoryName()
+    {
         return Shizzel.MOD_ID + ".terminal.chiseling.inventory";
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomInventoryName()
+    {
         return true;
     }
 
     @Override
-    public int getInventoryStackLimit() {
+    public int getInventoryStackLimit()
+    {
         return 64; // lol
     }
 
     @Override
-    public void markDirty() {
+    public void markDirty()
+    {
         this.markForSave();
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
+    public boolean isUseableByPlayer(EntityPlayer p_70300_1_)
+    {
         return true;
     }
 
     @Override
-    public void openInventory() {
+    public void openInventory()
+    {
         // Useless
     }
 
     @Override
-    public void closeInventory() {
+    public void closeInventory()
+    {
         // Useless
     }
 
     @Override
     public boolean isItemValidForSlot(int slotRequest, ItemStack is)
     {
-        if (isSlotSafe(slotRequest))
+        if (this.isSlotSafe(slotRequest))
         {
-            if(is == null)
+            if (is == null)
             {
                 return true;
             }
@@ -247,27 +272,29 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
         }
         else
         {
-           return false;
+            return false;
         }
     }
 
     @Override
-    public IMEMonitor<IAEItemStack> getItemInventory() {
+    public IMEMonitor<IAEItemStack> getItemInventory()
+    {
         return this.getGridBlock().getItemMonitor();
     }
 
     @Override
-    public IMEMonitor<IAEFluidStack> getFluidInventory() {
+    public IMEMonitor<IAEFluidStack> getFluidInventory()
+    {
         return null; // Useless
     }
 
     @Override
     public boolean doesPlayerHavePermissionToOpenGui(EntityPlayer player)
     {
-        if (this.doesPlayerHavePermission( player, SecurityPermissions.EXTRACT ) && this.doesPlayerHavePermission(player, SecurityPermissions.INJECT))
-       {
+        if (this.doesPlayerHavePermission(player, SecurityPermissions.EXTRACT) && this.doesPlayerHavePermission(player, SecurityPermissions.INJECT))
+        {
             return true;
-       }
+        }
 
         return false;
     }
@@ -276,7 +303,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     public void getDrops(List<ItemStack> drops, boolean wrenched)
     {
         // Were we wrenched?
-        if(wrenched)
+        if (wrenched)
         {
             // Inventory is saved when wrenched
             return;
@@ -294,7 +321,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     @Override
     public int getLightLevel()
     { //Brightness of block
-        return(this.isActive() ? 9 : 0);
+        return (this.isActive() ? 9 : 0);
     }
 
     @Override
@@ -328,9 +355,9 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     {
         ItemStack heldItem = entityPlayer.inventory.getCurrentItem();
 
-        if((heldItem != null) && (heldItem.getItem() instanceof IMemoryCard))
+        if ((heldItem != null) && (heldItem.getItem() instanceof IMemoryCard))
         {
-            IMemoryCard memoryCard = (IMemoryCard)heldItem.getItem();
+            IMemoryCard memoryCard = (IMemoryCard) heldItem.getItem();
 
             String settingsName = memoryCard.getSettingsName(heldItem);
 
@@ -343,21 +370,21 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound NBTData )
+    public void readFromNBT(NBTTagCompound NBTData)
     {
         super.readFromNBT(NBTData);
 
-        if(NBTData.hasKey(PartChiselingTerminal.NBTTagInv))
+        if (NBTData.hasKey(PartChiselingTerminal.NBTTagInv))
         {
-            NBTTagList NBTList = (NBTTagList)NBTData.getTag(PartChiselingTerminal.NBTTagInv);
+            NBTTagList NBTList = (NBTTagList) NBTData.getTag(PartChiselingTerminal.NBTTagInv);
 
-            for(int i = 0; i < NBTList.tagCount(); i++)
+            for (int i = 0; i < NBTList.tagCount(); i++)
             {
                 NBTTagCompound NBTCompound = NBTList.getCompoundTagAt(i);
 
                 int slot = NBTCompound.getByte(PartChiselingTerminal.NBTTagSlot);
 
-                if(isSlotSafe(slot))
+                if (this.isSlotSafe(slot))
                 {
                     ItemStack stackFromSlot = ItemStack.loadItemStackFromNBT(NBTCompound);
 
@@ -389,12 +416,14 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     public void registerListener(ContainerChiselingTerminal container)
     {
-        if(!this.listeners.contains(container))
+        if (!this.listeners.contains(container))
         {
             this.listeners.add(container);
         }
     }
-    public void removeListener(ContainerChiselingTerminal container) {
+
+    public void removeListener(ContainerChiselingTerminal container)
+    {
         this.listeners.remove(container);
     }
 
@@ -416,34 +445,34 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
         NBTTagList tagList = new NBTTagList();
 
-        for(int i = 0; i < PartChiselingTerminal.invSize; i++)
+        for (int i = 0; i < PartChiselingTerminal.invSize; i++)
         {
-            if(this.slots[i] != null)
+            if (this.slots[i] != null)
             {
                 NBTTagCompound tagCompound = new NBTTagCompound();
 
-                tagCompound.setByte(PartChiselingTerminal.NBTTagSlot, (byte)i);
+                tagCompound.setByte(PartChiselingTerminal.NBTTagSlot, (byte) i);
 
                 tagList.appendTag(tagCompound);
             }
         }
 
-        if(tagList.tagCount() > 0)
+        if (tagList.tagCount() > 0)
         {
             NBTData.setTag(PartChiselingTerminal.NBTTagInv, tagList);
         }
 
-        if(this.sortDirection != PartChiselingTerminal.defSortDirection)
+        if (this.sortDirection != PartChiselingTerminal.defSortDirection)
         {
             NBTData.setInteger(PartChiselingTerminal.NBTTagSortDirection, this.sortDirection.ordinal());
         }
 
-        if(this.sortOrder != PartChiselingTerminal.defSortOrder)
+        if (this.sortOrder != PartChiselingTerminal.defSortOrder)
         {
             NBTData.setInteger(PartChiselingTerminal.NBTTagSortOrder, this.sortOrder.ordinal());
         }
 
-        if(this.viewMode != PartChiselingTerminal.defViewItems)
+        if (this.viewMode != PartChiselingTerminal.defViewItems)
         {
             NBTData.setInteger(PartChiselingTerminal.NBTTagViewMode, this.viewMode.ordinal());
         }

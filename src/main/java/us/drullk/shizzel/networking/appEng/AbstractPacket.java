@@ -12,7 +12,9 @@ public abstract class AbstractPacket implements IMessage
 {
 
     public EntityPlayer entityPlayer;
+
     public byte mode;
+
     protected boolean useCompression;
 
     public AbstractPacket()
@@ -29,12 +31,14 @@ public abstract class AbstractPacket implements IMessage
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(ByteBuf buf)
+    {
 
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(ByteBuf buf)
+    {
 
     }
 }

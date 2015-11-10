@@ -1,5 +1,8 @@
 package us.drullk.shizzel.appEng;
 
+import java.util.Map;
+import java.util.Set;
+
 import appeng.api.AEApi;
 import appeng.api.config.Upgrades;
 import appeng.api.implementations.items.IItemGroup;
@@ -10,35 +13,33 @@ import net.minecraft.item.ItemStack;
 import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.appEng.enumList.AEParts;
 
-import java.util.Map;
-import java.util.Set;
-
 public class ItemAEPart extends Item implements IPartItem, IItemGroup
 {
     public ItemAEPart()
     {
-        this.setMaxDamage( 0 );
+        this.setMaxDamage(0);
 
-        this.setHasSubtypes( true );
+        this.setHasSubtypes(true);
 
-        AEApi.instance().partHelper().setItemBusRenderer( this );
+        AEApi.instance().partHelper().setItemBusRenderer(this);
 
         Map<Upgrades, Integer> possibleUpgradesList;
 
-        for(AEParts part : AEParts.values() )
+        for (AEParts part : AEParts.values())
         {
             possibleUpgradesList = part.getUpgrades();
 
-            for( Upgrades upgrade : possibleUpgradesList.keySet() )
+            for (Upgrades upgrade : possibleUpgradesList.keySet())
             {
-                upgrade.registerItem( new ItemStack( this, 1, part.ordinal() ), possibleUpgradesList.get( upgrade ).intValue() );
+                upgrade.registerItem(new ItemStack(this, 1, part.ordinal()), possibleUpgradesList.get(upgrade).intValue());
             }
         }
     }
 
     @Override
-    public String getUnlocalizedGroupName(Set<ItemStack> set, ItemStack itemStack) {
-        return AEParts.getPartFromDamageValue( itemStack ).getGroupName();
+    public String getUnlocalizedGroupName(Set<ItemStack> set, ItemStack itemStack)
+    {
+        return AEParts.getPartFromDamageValue(itemStack).getGroupName();
     }
 
     @Override
@@ -53,16 +54,16 @@ public class ItemAEPart extends Item implements IPartItem, IItemGroup
         IPart newPart = null;
 
         // Get the part
-        AEParts part = AEParts.getPartFromDamageValue( itemStack );
+        AEParts part = AEParts.getPartFromDamageValue(itemStack);
 
         // Attempt to create a new instance of the part
         try
         {
-            newPart = part.createPartInstance( itemStack );
+            newPart = part.createPartInstance(itemStack);
         }
-        catch( Throwable e )
+        catch (Throwable e)
         {
-            Shizzel.logger.error( "Unable to create cable-part from item: %s", itemStack.getDisplayName() );
+            Shizzel.logger.error("Unable to create cable-part from item: %s", itemStack.getDisplayName());
 
             e.printStackTrace();
         }

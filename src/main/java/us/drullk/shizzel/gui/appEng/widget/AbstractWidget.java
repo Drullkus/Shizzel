@@ -1,10 +1,11 @@
 package us.drullk.shizzel.gui.appEng.widget;
 
-import net.minecraft.client.gui.Gui;
-import org.lwjgl.opengl.GL11;
-import us.drullk.shizzel.utils.Helper;
-
 import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.gui.Gui;
+import us.drullk.shizzel.utils.Helper;
 
 public abstract class AbstractWidget extends Gui
 {

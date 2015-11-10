@@ -10,6 +10,6 @@ public abstract class AbstractPacketClient extends AbstractPacket
 
     public void sendPacketToPlayer()
     {
-        ChannelHandler.sendPacketToPlayer( this, this.entityPlayer );
+        ChannelHandler.sendPacketToPlayer(this, this.entityPlayer);
     }
 }

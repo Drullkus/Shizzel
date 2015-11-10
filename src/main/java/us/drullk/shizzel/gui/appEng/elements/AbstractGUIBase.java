@@ -1,14 +1,15 @@
 package us.drullk.shizzel.gui.appEng.elements;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import us.drullk.shizzel.utils.Helper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractGUIBase extends GuiContainer
 {
@@ -46,7 +47,7 @@ public abstract class AbstractGUIBase extends GuiContainer
          * @param r
          * Right X position.
          */
-        public Bounds( final int t, final int l, final int b, final int r )
+        public Bounds(final int t, final int l, final int b, final int r)
         {
             this.T = t;
             this.L = l;
@@ -56,33 +57,41 @@ public abstract class AbstractGUIBase extends GuiContainer
     }
 
     private static final int TOOLTIP_OFFSET = 12;
+
     private static final int TOOLTIP_EMPTY_HEIGHT = 8;
+
     private static final int TOOLTIP_LINE_HEIGHT = 10;
+
     private static final int TOOLTIP_HEIGHT_MARGIN = 2;
+
     private static final int TOOLTIP_BORDER_SIZE = 3;
 
     private static final int TOOLTIP_COLOR_BACKGROUND = 0xF0100010;
+
     private static final int TOOLTIP_COLOR_OUTER = 0xFF000000;
+
     private static final int TOOLTIP_COLOR_INNER_BEGIN = 0xC05000FF;
+
     private static final int TOOLTIP_COLOR_INNER_END = 0xC05000FF;
 
     protected final List<String> tooltip = new ArrayList<String>();
 
-    public AbstractGUIBase(Container container) {
+    public AbstractGUIBase(Container container)
+    {
         super(container);
     }
 
     protected final boolean addTooltipFromButtons(int cursorX, int cursorY)
     {
-        for( Object obj : this.buttonList )
+        for (Object obj : this.buttonList)
         {
-            if( obj instanceof AbstractGuiButtonBase )
+            if (obj instanceof AbstractGuiButtonBase)
             {
-                AbstractGuiButtonBase currentButton = (AbstractGuiButtonBase)obj;
+                AbstractGuiButtonBase currentButton = (AbstractGuiButtonBase) obj;
 
-                if( currentButton.isMouseOverButton(cursorX, cursorY) )
+                if (currentButton.isMouseOverButton(cursorX, cursorY))
                 {
-                    currentButton.getTooltip( this.tooltip );
+                    currentButton.getTooltip(this.tooltip);
 
                     return true;
                 }
@@ -92,21 +101,21 @@ public abstract class AbstractGUIBase extends GuiContainer
         return false;
     }
 
-    protected final void drawTooltip( int posX, int posY, final boolean clearTooltipAfterDraw )
+    protected final void drawTooltip(int posX, int posY, final boolean clearTooltipAfterDraw)
     {
-        if( !this.tooltip.isEmpty() )
+        if (!this.tooltip.isEmpty())
         {
             // Disable rescaling
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
             // Disable lighting
-            GL11.glDisable( GL11.GL_LIGHTING );
+            GL11.glDisable(GL11.GL_LIGHTING);
 
             // Disable depth testing
-            GL11.glDisable( GL11.GL_DEPTH_TEST );
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
 
             // Bounds check the position
-            if( posY < 0 )
+            if (posY < 0)
             {
                 posY = 0;
             }
@@ -115,13 +124,13 @@ public abstract class AbstractGUIBase extends GuiContainer
             int maxStringLength_px = 0;
 
             // Get max string length from lines in the list
-            for( String string : this.tooltip )
+            for (String string : this.tooltip)
             {
                 // Get the length of the string
-                int stringLen = this.mc.fontRenderer.getStringWidth( string );
+                int stringLen = this.mc.fontRenderer.getStringWidth(string);
 
                 // Is it larger than the previous length?
-                if( stringLen > maxStringLength_px )
+                if (stringLen > maxStringLength_px)
                 {
                     // Set it to maximum
                     maxStringLength_px = stringLen;
@@ -136,13 +145,13 @@ public abstract class AbstractGUIBase extends GuiContainer
             int tooltipHeight = AbstractGUIBase.TOOLTIP_EMPTY_HEIGHT;
 
             // Adjust height based on the number of lines
-            if( this.tooltip.size() > 1 )
+            if (this.tooltip.size() > 1)
             {
                 // Calculate the line height
-                int lineHeight = ( this.tooltip.size() - 1 ) * AbstractGUIBase.TOOLTIP_LINE_HEIGHT;
+                int lineHeight = (this.tooltip.size() - 1) * AbstractGUIBase.TOOLTIP_LINE_HEIGHT;
 
                 // Adjust the height
-                tooltipHeight += ( AbstractGUIBase.TOOLTIP_HEIGHT_MARGIN + lineHeight );
+                tooltipHeight += (AbstractGUIBase.TOOLTIP_HEIGHT_MARGIN + lineHeight);
             }
 
             // Get the current z level
@@ -152,23 +161,23 @@ public abstract class AbstractGUIBase extends GuiContainer
             this.zLevel = 300;
 
             // Tooltip boundary
-            Bounds bounds = new Bounds( posY - AbstractGUIBase.TOOLTIP_BORDER_SIZE, posX - AbstractGUIBase.TOOLTIP_BORDER_SIZE, posY + tooltipHeight +
-                    AbstractGUIBase.TOOLTIP_BORDER_SIZE, posX + maxStringLength_px + AbstractGUIBase.TOOLTIP_BORDER_SIZE );
+            Bounds bounds = new Bounds(posY - AbstractGUIBase.TOOLTIP_BORDER_SIZE, posX - AbstractGUIBase.TOOLTIP_BORDER_SIZE, posY + tooltipHeight +
+                    AbstractGUIBase.TOOLTIP_BORDER_SIZE, posX + maxStringLength_px + AbstractGUIBase.TOOLTIP_BORDER_SIZE);
 
             // Draw the background and borders
-            this.drawTooltipBackground( bounds );
+            this.drawTooltipBackground(bounds);
 
             // Draw each line
-            for( int index = 0; index < this.tooltip.size(); index++ )
+            for (int index = 0; index < this.tooltip.size(); index++)
             {
                 // Get the line
-                String line = this.tooltip.get( index );
+                String line = this.tooltip.get(index);
 
                 // Draw the line
-                this.mc.fontRenderer.drawStringWithShadow( line, posX, posY, -1 );
+                this.mc.fontRenderer.drawStringWithShadow(line, posX, posY, -1);
 
                 // Is this the first line?
-                if( index == 0 )
+                if (index == 0)
                 {
                     // Add the margin
                     posY += AbstractGUIBase.TOOLTIP_HEIGHT_MARGIN;
@@ -182,71 +191,71 @@ public abstract class AbstractGUIBase extends GuiContainer
             this.zLevel = prevZlevel;
 
             // Reenable lighting
-            GL11.glEnable( GL11.GL_LIGHTING );
+            GL11.glEnable(GL11.GL_LIGHTING);
 
             // Reenable depth testing
-            GL11.glEnable( GL11.GL_DEPTH_TEST );
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
 
             // Reenable scaling
-            GL11.glEnable( GL12.GL_RESCALE_NORMAL );
+            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 
             // Clear the tooltip
-            if( clearTooltipAfterDraw )
+            if (clearTooltipAfterDraw)
             {
                 this.tooltip.clear();
             }
         }
     }
 
-    private final void drawTooltipBackground( final Bounds bounds )
+    private final void drawTooltipBackground(final Bounds bounds)
     {
         // Background
-        this.drawGradientRect( bounds.L, bounds.T, bounds.R, bounds.B, AbstractGUIBase.TOOLTIP_COLOR_BACKGROUND,
-                AbstractGUIBase.TOOLTIP_COLOR_BACKGROUND );
+        this.drawGradientRect(bounds.L, bounds.T, bounds.R, bounds.B, AbstractGUIBase.TOOLTIP_COLOR_BACKGROUND,
+                AbstractGUIBase.TOOLTIP_COLOR_BACKGROUND);
 
         // Draw outer borders
-        this.drawTooltipBorders( bounds, AbstractGUIBase.TOOLTIP_COLOR_OUTER, AbstractGUIBase.TOOLTIP_COLOR_OUTER, 0 );
+        this.drawTooltipBorders(bounds, AbstractGUIBase.TOOLTIP_COLOR_OUTER, AbstractGUIBase.TOOLTIP_COLOR_OUTER, 0);
 
         // Adjust bounds for inner borders
-        bounds.T++ ;
-        bounds.L++ ;
-        bounds.B-- ;
-        bounds.R-- ;
+        bounds.T++;
+        bounds.L++;
+        bounds.B--;
+        bounds.R--;
 
         // Draw inner borders
-        this.drawTooltipBorders( bounds, AbstractGUIBase.TOOLTIP_COLOR_INNER_BEGIN, AbstractGUIBase.TOOLTIP_COLOR_INNER_END, 1 );
+        this.drawTooltipBorders(bounds, AbstractGUIBase.TOOLTIP_COLOR_INNER_BEGIN, AbstractGUIBase.TOOLTIP_COLOR_INNER_END, 1);
     }
 
-    private final void drawTooltipBorders( final Bounds bounds, final int colorStart, final int colorEnd, final int cornerExpansion )
+    private final void drawTooltipBorders(final Bounds bounds, final int colorStart, final int colorEnd, final int cornerExpansion)
     {
         // Left
-        this.drawGradientRect(bounds.L - 1, bounds.T - cornerExpansion, bounds.L, bounds.B + cornerExpansion, colorStart, colorEnd );
+        this.drawGradientRect(bounds.L - 1, bounds.T - cornerExpansion, bounds.L, bounds.B + cornerExpansion, colorStart, colorEnd);
 
         // Top
-        this.drawGradientRect(bounds.L, bounds.T - 1, bounds.R, bounds.T, colorStart, colorEnd );
+        this.drawGradientRect(bounds.L, bounds.T - 1, bounds.R, bounds.T, colorStart, colorEnd);
 
         // Right
-        this.drawGradientRect(bounds.R, bounds.T - cornerExpansion, bounds.R + 1, bounds.B + cornerExpansion, colorStart, colorEnd );
+        this.drawGradientRect(bounds.R, bounds.T - cornerExpansion, bounds.R + 1, bounds.B + cornerExpansion, colorStart, colorEnd);
 
         // Bottom
         this.drawGradientRect(bounds.L, bounds.B, bounds.R, bounds.B + 1, colorStart, colorEnd);
     }
 
-    private final boolean isPointWithinSlot( final Slot slot, final int x, final int y )
+    private final boolean isPointWithinSlot(final Slot slot, final int x, final int y)
     {
         return Helper.isPointInGuiRegion(slot.yDisplayPosition, slot.xDisplayPosition, 16, 16, x, y, this.guiLeft, this.guiTop);
     }
 
-    protected final Slot getSlotAtPosition( final int x, final int y )
+    protected final Slot getSlotAtPosition(final int x, final int y)
     {
         // Loop over all slots
-        for( int i = 0; i < this.inventorySlots.inventorySlots.size(); i++ )
+        for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i++)
         {
             // Get the slot
-            Slot slot = (Slot)this.inventorySlots.inventorySlots.get( i );
+            Slot slot = (Slot) this.inventorySlots.inventorySlots.get(i);
 
             // Is the point within the slot?
-            if( this.isPointWithinSlot( slot, x, y ) )
+            if (this.isPointWithinSlot(slot, x, y))
             {
                 // Return the slot
                 return slot;
