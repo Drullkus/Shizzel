@@ -79,28 +79,21 @@ repositories {
 }
 
 dependencies {
-    //compile "mcp.mobius.waila:Waila:${waila_version}_${minecraft_version}:dev"
-    compile "net.sengir.forestry:forestry_${minecraft_version}:${forestry_version}:api"
-    runtime "net.sengir.forestry:forestry_${minecraft_version}:${forestry_version}:dev"
-
+	compile ("appeng:appliedenergistics2:${ae_version}:api"){
+        transitive = false
+	}
+	compile ("appeng:appliedenergistics2:${ae_version}:dev"){
+        transitive = false
+	}
+	shade ("team.chisel.ctmlib:CTMLib:${ctmlib_version}") {
+        transitive = false
+    }
 	compile "codechicken:CodeChickenLib:${minecraft_version}-${ccl_version}:dev"
-	compile "codechicken:CodeChickenCore:${minecraft_version}-${ccc_version}:dev"
-	compile "codechicken:NotEnoughItems:${minecraft_version}-${nei_version}:dev"
-    compile "codechicken:ForgeMultipart:${minecraft_version}-${fmp_version}:dev"
-
-    compile "com.pahimar.ee3:EquivalentExchange3:1.7.10-0.3.505:dev"
-	compile "team.chisel:Chisel:${chisel_version}:deobf"
-
-    compile ("appeng:appliedenergistics2:${ae_version}:api") {
-        transitive = false
-    }
-    compile ("appeng:appliedenergistics2:${ae_version}:dev") {
-        transitive = false
-    }
-    
-    shade ("team.chisel.ctmlib:CTMLib:${ctmlib_version}") {
-        transitive = false
-    }
+    compile "codechicken:CodeChickenCore:${minecraft_version}-${ccc_version}:dev"
+    compile "codechicken:NotEnoughItems:${minecraft_version}-${nei_version}:dev"
+    compile "team.chisel:Chisel:${chisel_version}:deobf"
+    compile "net.sengir.forestry:forestry_${minecraft_version}:${forestry_version}:api"
+    compile "net.sengir.forestry:forestry_${minecraft_version}:${forestry_version}:dev"
 }
 
 processResources
