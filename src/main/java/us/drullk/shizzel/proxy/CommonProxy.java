@@ -7,15 +7,7 @@ import us.drullk.shizzel.utils.EnumBlockTextures;
 
 public class CommonProxy
 {
-    public static String FORESTRY_GFX_ITEMS;
-
-    public static String FORESTRY_GFX_BEEEFFECTS;
-
-    public static int RenderIdEffectJar;
-
-    public static int RenderIdVisAuraProvider;
-
-    public void registerRenderers()
+    public CommonProxy()
     {
     }
 

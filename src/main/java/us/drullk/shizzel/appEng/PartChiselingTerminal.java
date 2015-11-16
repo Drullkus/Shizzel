@@ -97,9 +97,9 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
         IIcon side = EnumBlockTextures.BASE.getTexture();
 
-        /*iPartRenderHelper.setTexture(side);
+        iPartRenderHelper.setTexture(side);
         iPartRenderHelper.setBounds(4.0F, 4.0F, 13.0F, 12.0F, 12.0F, 14.0F);
-        iPartRenderHelper.renderBlock(x, y, z, renderBlocks);//*/
+        iPartRenderHelper.renderBlock(x, y, z, renderBlocks);
 
         iPartRenderHelper.setTexture(side, side, side, EnumBlockTextures.CHISELING_TERMINAL.getTextures()[3], side, side);
         iPartRenderHelper.setBounds(2.0F, 2.0F, 14.0F, 14.0F, 14.0F, 16.0F);
