@@ -27,6 +27,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,6 +39,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import us.drullk.shizzel.appEng.enumList.AEParts;
+import us.drullk.shizzel.utils.EnumBlockTextures;
 import us.drullk.shizzel.utils.Helper;
 
 public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
@@ -431,5 +433,50 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
         {
             this.readFromNBT(itemPart.getTagCompound());
         }
+    }
+
+    public final void markForUpdate()
+    {
+        if( this.host != null )
+        {
+            this.host.markForUpdate();
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void renderStaticBusLights( final int x, final int y, final int z, final IPartRenderHelper helper, final RenderBlocks renderer )
+    {
+        IIcon busColorTexture = EnumBlockTextures.BUS_COLOR.getTextures()[0];
+
+        IIcon sideTexture = EnumBlockTextures.BUS_COLOR.getTextures()[2];
+
+        helper.setTexture( busColorTexture, busColorTexture, sideTexture, sideTexture, busColorTexture, busColorTexture );
+
+        // Render the box
+        helper.renderBlock( x, y, z, renderer );
+
+        // Are we active?
+        if( this.isActive() )
+        {
+            // Set the brightness
+            Tessellator.instance.setBrightness( 0xD000D0 );
+
+            // Set the color to match the cable
+            Tessellator.instance.setColorOpaque_I( this.host.getColor().blackVariant );
+        }
+        else
+        {
+            // Set the color to black
+            Tessellator.instance.setColorOpaque_I( 0 );
+        }
+
+        IIcon lightTexture = EnumBlockTextures.BUS_COLOR.getTextures()[1];
+
+        helper.renderFace( x, y, z, lightTexture, ForgeDirection.UP, renderer );
+        helper.renderFace( x, y, z, lightTexture, ForgeDirection.DOWN, renderer );
+        helper.renderFace( x, y, z, lightTexture, ForgeDirection.NORTH, renderer );
+        helper.renderFace( x, y, z, lightTexture, ForgeDirection.EAST, renderer );
+        helper.renderFace( x, y, z, lightTexture, ForgeDirection.SOUTH, renderer );
+        helper.renderFace( x, y, z, lightTexture, ForgeDirection.WEST, renderer );
     }
 }

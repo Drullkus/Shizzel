@@ -31,9 +31,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.appEng.enumList.AEParts;
 import us.drullk.shizzel.container.appEng.ContainerChiselingTerminal;
+import us.drullk.shizzel.utils.EnumBlockTextures;
 
 public class PartChiselingTerminal extends AEPartAbstractRotateable implements IInventory, IGridTickable, ITerminalHost
 {
@@ -89,15 +91,50 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderStatic(int i, int i1, int i2, IPartRenderHelper iPartRenderHelper, RenderBlocks renderBlocks)
+    public void renderStatic(int x, int y, int z, IPartRenderHelper iPartRenderHelper, RenderBlocks renderBlocks)
     {
-        //TODO: Block Render.
+        Tessellator ts = Tessellator.instance;
+
+        IIcon side = EnumBlockTextures.BASE.getTexture();
+
+        /*iPartRenderHelper.setTexture(side);
+        iPartRenderHelper.setBounds(4.0F, 4.0F, 13.0F, 12.0F, 12.0F, 14.0F);
+        iPartRenderHelper.renderBlock(x, y, z, renderBlocks);//*/
+
+        iPartRenderHelper.setTexture(side, side, side, EnumBlockTextures.CHISELING_TERMINAL.getTextures()[3], side, side);
+        iPartRenderHelper.setBounds(2.0F, 2.0F, 14.0F, 14.0F, 14.0F, 16.0F);
+        iPartRenderHelper.renderBlock(x, y, z, renderBlocks);
+
+        if( this.isActive() )
+        {
+            Tessellator.instance.setBrightness( 0xD000D0 );
+        }
+
+        this.rotateRenderer(renderBlocks, false);
+
+        ts.setColorOpaque_I(0xFFFFFF);
+        iPartRenderHelper.renderFace(x, y, z, EnumBlockTextures.CHISELING_TERMINAL.getTextures()[3], ForgeDirection.SOUTH, renderBlocks);
+
+        iPartRenderHelper.setBounds(3.0F, 3.0F, 15.0F, 13.0F, 13.0F, 16.0F);
+        ts.setColorOpaque_I(this.host.getColor().blackVariant);
+        iPartRenderHelper.renderFace( x, y, z, EnumBlockTextures.CHISELING_TERMINAL.getTextures()[0], ForgeDirection.SOUTH, renderBlocks);
+
+        ts.setColorOpaque_I( this.host.getColor().mediumVariant );
+        iPartRenderHelper.renderFace( x, y, z, EnumBlockTextures.CHISELING_TERMINAL.getTextures()[1], ForgeDirection.SOUTH, renderBlocks);
+
+        ts.setColorOpaque_I( this.host.getColor().whiteVariant );
+        iPartRenderHelper.renderFace( x, y, z, EnumBlockTextures.CHISELING_TERMINAL.getTextures()[2], ForgeDirection.SOUTH, renderBlocks);
+
+        this.rotateRenderer(renderBlocks, true );
+
+        iPartRenderHelper.setBounds( 5.0F, 5.0F, 12.0F, 11.0F, 11.0F, 13.0F );
+        this.renderStaticBusLights( x, y, z, iPartRenderHelper, renderBlocks );
     }
 
     @Override
     public IIcon getBreakingTexture()
     {
-        return null; //TODO: Make texture for default breaking particles
+        return EnumBlockTextures.BASE.getTexture();
     }
 
     @Override
@@ -109,7 +146,8 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     @Override
     public void getBoxes(IPartCollisionHelper iPartCollisionHelper)
     {
-        //TODO: Collision Boxes
+        iPartCollisionHelper.addBox( 2.0D, 2.0D, 14.0D, 14.0D, 14.0D, 16.0D );
+        iPartCollisionHelper.addBox( 5.0D, 5.0D, 13.0D, 11.0D, 11.0D, 14.0D );
     }
 
     @Override
@@ -129,7 +167,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     {
         //TODO: Find out what this is.
         //Looks like it is a call to the Part's functions. Possibly important
-        return null;
+        return TickRateModulation.IDLE;
     }
 
     @Override

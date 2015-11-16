@@ -7,7 +7,7 @@ import us.drullk.shizzel.appEng.ItemAEPart;
 
 public enum AEItems
 {
-    AEPartItem("part.base", new ItemAEPart());
+    AEPartItem("part.base", new ItemAEPart().setUnlocalizedName(Shizzel.MOD_ID + ".item.aepart"));
 
     private final String name;
 
