@@ -58,7 +58,7 @@ public class Shizzel {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		logger.info("Shizzel's shenangans have begun! Prepare yourself, Chisel!");
+		logger.info("Shizzel's shenanigans have begun! Prepare yourself, Chisel!");
 		proxy.preInit();
 
         if (Loader.isModLoaded("appliedenergistics2"))
