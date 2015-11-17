@@ -1,5 +1,6 @@
 package us.drullk.shizzel;
 
+import cpw.mods.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import us.drullk.shizzel.appEng.AppEngHandler;
 import us.drullk.shizzel.forestry.Forestry;
 import us.drullk.shizzel.proxy.CommonProxy;
+import us.drullk.shizzel.utils.ShizzelGUIHandler;
 
 @Mod(modid = Shizzel.MOD_ID, name = Shizzel.MOD_NAME, version = Shizzel.VERSION, dependencies = "required-after:chisel;" +
         "after:Forestry;" +
@@ -63,6 +65,8 @@ public class Shizzel
     {
         logger.info("Shizzel's shenangans have begun! Prepare yourself, Chisel!");
         proxy.preInit();
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, new ShizzelGUIHandler());
 
         if (Loader.isModLoaded("appliedenergistics2"))
         {

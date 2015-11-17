@@ -41,6 +41,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import us.drullk.shizzel.appEng.enumList.AEParts;
 import us.drullk.shizzel.utils.EnumBlockTextures;
 import us.drullk.shizzel.utils.Helper;
+import us.drullk.shizzel.utils.ShizzelGUIHandler;
 
 public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
 {
@@ -133,6 +134,11 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
         return null;
     }
 
+    public Object getClientGuiElement(EntityPlayer player)
+    {
+        return null;
+    }
+
     public ForgeDirection getSide()
     {
         return this.cableSide;
@@ -164,7 +170,7 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
     @Override
     public AECableType getCableConnectionType(ForgeDirection forgeDirection)
     {
-        return AECableType.SMART;
+        return AECableType.GLASS;
     }
 
     @Override
@@ -386,7 +392,7 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
         if (Helper.isServerSide())
         {
             // Launch the gui
-            Helper.launchGui(this, entityPlayer, this.TE.getWorldObj(), this.TE.xCoord, this.TE.yCoord, this.TE.zCoord);
+            ShizzelGUIHandler.launchGui(this, entityPlayer, this.TE.getWorldObj(), this.TE.xCoord, this.TE.yCoord, this.TE.zCoord);
         }
         return false;
     }

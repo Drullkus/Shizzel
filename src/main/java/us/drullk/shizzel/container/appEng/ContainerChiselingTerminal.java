@@ -16,17 +16,14 @@ import us.drullk.shizzel.utils.Helper;
 public class ContainerChiselingTerminal extends ContainerWithPlayerInventory implements IMEMonitorHandlerReceiver<IAEItemStack>
 {
     public static int VIEW_SLOT_XPOS = 206, VIEW_SLOT_YPOS = 8;
-
     private static int playerInvPosY = 85;
-
     private static int hotbarInvPosY = playerInvPosY + (renderSlotSize * 3) + 4;
 
+    private int firstViewSlotNumber = -1, lastViewSlotNumber = -1;
+
     private PartChiselingTerminal chiselTerm;
-
     private EntityPlayer entityPlayer;
-
     private IMEMonitor<IAEItemStack> MEMonitor;
-
     private PlayerSource playerSource;
 
     public ContainerChiselingTerminal(PartChiselingTerminal chiselingTerminal, EntityPlayer player)
@@ -121,4 +118,21 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         //Useless
     }
 
+    public void changeSlotsYOffset( final int deltaY )
+    {
+        for( Object slotObj : this.inventorySlots )
+        {
+            // Get the slot
+            Slot slot = (Slot)slotObj;
+
+            // Skip view slots
+            if( ( slot.slotNumber >= this.firstViewSlotNumber ) && ( slot.slotNumber <= this.lastViewSlotNumber ) )
+            {
+                continue;
+            }
+
+            // Adjust Y pos
+            slot.yDisplayPosition += deltaY;
+        }
+    }
 }

@@ -11,10 +11,24 @@ import net.minecraft.util.EnumChatFormatting;
 public abstract class AbstractStateGuiButton extends AbstractGuiButtonBase
 {
     protected IStateIconTexture stateIcon;
+    public int iconXOffset = 0, iconYOffset = 0;
+    private IStateIconTexture backgroundIcon;
 
-    public AbstractStateGuiButton(int ID, int x, int y, String text)
+    public AbstractStateGuiButton( final int ID, final int xPosition, final int yPosition, final int buttonWidth, final int buttonHeight,
+            final IStateIconTexture icon, final int iconXOffset, final int iconYOffset, final IStateIconTexture backgroundIcon )
     {
-        super(ID, x, y, text);
+        // Call super
+        super( ID, xPosition, yPosition, buttonWidth, buttonHeight, "" );
+
+        // Set the icon
+        this.stateIcon = icon;
+
+        // Set the offsets
+        this.iconXOffset = iconXOffset;
+        this.iconYOffset = iconYOffset;
+
+        // Set background
+        this.backgroundIcon = backgroundIcon;
     }
 
     protected void addAboutToTooltip(List<String> tooltip, String title, String text)

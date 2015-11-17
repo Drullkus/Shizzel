@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL12;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import us.drullk.shizzel.utils.GuiHelper;
 import us.drullk.shizzel.utils.Helper;
 
 public abstract class AbstractGUIBase extends GuiContainer
@@ -243,7 +244,7 @@ public abstract class AbstractGUIBase extends GuiContainer
 
     private final boolean isPointWithinSlot(final Slot slot, final int x, final int y)
     {
-        return Helper.isPointInGuiRegion(slot.yDisplayPosition, slot.xDisplayPosition, 16, 16, x, y, this.guiLeft, this.guiTop);
+        return GuiHelper.INSTANCE.isPointInGuiRegion(slot.yDisplayPosition, slot.xDisplayPosition, 16, 16, x, y, this.guiLeft, this.guiTop);
     }
 
     protected final Slot getSlotAtPosition(final int x, final int y)

@@ -84,23 +84,4 @@ public class Helper
     {
         return Helper.FCH.getEffectiveSide().isServer();
     }
-
-    public static boolean isPointInGuiRegion(int top, int left, int height, int width, int pointX, int pointY, int guiLeft, int guiTop)
-    {
-        return isPointInRegion(top, left, height, width, pointX - guiLeft, pointY - guiTop);
-    }
-
-    public static boolean isPointInRegion(int top, int left, int height, int width, int pointX, int pointY)
-    {
-        return (pointX >= left) && (pointX <= (left + width)) && (pointY >= top) && (pointY <= (top + height));
-    }
-
-    public static void launchGui(final AEPartAbstract part, final EntityPlayer player, final World world, final int x, final int y, final int z)
-    {
-        // Ensure the player is allowed to open the gui
-        if (part.doesPlayerHavePermissionToOpenGui(player))
-        {
-            player.openGui(Shizzel.instance, part.getSide().ordinal(), world, x, y, z);
-        }
-    }
 }
