@@ -15,8 +15,8 @@ public class ChannelHandler
     {
         byte discriminator = 0;
 
-        wrapper.registerMessage( HandlerChiselingTerminalClient.class, PacketChiselingTerminalClient.class, discriminator++ , Side.CLIENT );
-        wrapper.registerMessage( HandlerChiselingTerminalServer.class, PacketChiselingTerminalServer.class, discriminator++ , Side.SERVER );
+        wrapper.registerMessage(HandlerChiselingTerminalClient.class, PacketChiselingTerminalClient.class, discriminator++, Side.CLIENT);
+        wrapper.registerMessage(HandlerChiselingTerminalServer.class, PacketChiselingTerminalServer.class, discriminator++, Side.SERVER);
     }
 
     public static void sendPacketToPlayer(final AbstractPacket packet, final EntityPlayer player)

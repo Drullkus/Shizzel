@@ -12,12 +12,12 @@ public class SlotRestrictive extends Slot
     {
         super(p_i1824_1_, p_i1824_2_, p_i1824_3_, p_i1824_4_);
 
-        index = p_i1824_2_;
+        this.index = p_i1824_2_;
     }
 
     @Override
-    public boolean isItemValid( final ItemStack itemstack )
+    public boolean isItemValid(final ItemStack itemstack)
     {
-        return this.inventory.isItemValidForSlot( this.index, itemstack );
+        return this.inventory.isItemValidForSlot(this.index, itemstack);
     }
 }

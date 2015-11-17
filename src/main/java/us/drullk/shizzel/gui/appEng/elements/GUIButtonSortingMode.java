@@ -11,9 +11,9 @@ public class GUIButtonSortingMode extends AbstractStateGuiButton
 {
     private String tooltipSortBy = "";
 
-    public GUIButtonSortingMode( final int ID, final int xPosition, final int yPosition, final int width, final int height )
+    public GUIButtonSortingMode(final int ID, final int xPosition, final int yPosition, final int width, final int height)
     {
-        super( ID, xPosition, yPosition, width, height, AEStateIconsEnum.SORT_MODE_ALPHABETIC, 0, 0, AEStateIconsEnum.REGULAR_BUTTON );
+        super(ID, xPosition, yPosition, width, height, AEStateIconsEnum.SORT_MODE_ALPHABETIC, 0, 0, AEStateIconsEnum.REGULAR_BUTTON);
     }
 
     @Override

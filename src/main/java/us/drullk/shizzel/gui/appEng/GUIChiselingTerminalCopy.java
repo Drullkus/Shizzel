@@ -1,6 +1,17 @@
 package us.drullk.shizzel.gui.appEng;
 
-import appeng.api.config.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+
+import appeng.api.config.SearchBoxMode;
+import appeng.api.config.Settings;
+import appeng.api.config.SortDir;
+import appeng.api.config.SortOrder;
+import appeng.api.config.TerminalStyle;
+import appeng.api.config.ViewItems;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.client.gui.widgets.GuiScrollbar;
@@ -15,19 +26,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.appEng.PartChiselingTerminal;
 import us.drullk.shizzel.container.appEng.ContainerChiselingTerminal;
-import us.drullk.shizzel.gui.appEng.elements.*;
+import us.drullk.shizzel.gui.appEng.elements.AEStateIconsEnum;
+import us.drullk.shizzel.gui.appEng.elements.AbstractGUIBase;
+import us.drullk.shizzel.gui.appEng.elements.GUIButtonSortingDirection;
+import us.drullk.shizzel.gui.appEng.elements.GUIButtonSortingMode;
+import us.drullk.shizzel.gui.appEng.elements.GUIButtonViewType;
 import us.drullk.shizzel.gui.appEng.widget.WidgetAEItem;
 import us.drullk.shizzel.networking.appEng.PacketChiselingTerminalServer;
 import us.drullk.shizzel.utils.GuiHelper;
-import us.drullk.shizzel.utils.Helper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GUIChiselingTerminalCopy extends AbstractGUIBase implements ISortSource
@@ -132,10 +141,10 @@ public class GUIChiselingTerminalCopy extends AbstractGUIBase implements ISortSo
         this.guiTitle = "shizzel.gui.chiselingterminal.name";
 
         // Create the repo
-        this.itemRepo = new ItemRepo( this.scrollBar, this );
+        this.itemRepo = new ItemRepo(this.scrollBar, this);
 
         // Get the terminal style
-        this.terminalStyle = (TerminalStyle)AEConfig.instance.getConfigManager().getSetting( Settings.TERMINAL_STYLE );
+        this.terminalStyle = (TerminalStyle) AEConfig.instance.getConfigManager().getSetting(Settings.TERMINAL_STYLE);
     }
 
     public void onReceiveFullList(IItemList<IAEItemStack> itemList)
@@ -210,13 +219,13 @@ public class GUIChiselingTerminalCopy extends AbstractGUIBase implements ISortSo
     private void updateScrollbarRange()
     {
         // Calculate the total number of widgetRows needed to display ALL items
-        int totalNumberOfRows = (int)Math.ceil( this.itemRepo.size() / (double)ME_COLUMNS );
+        int totalNumberOfRows = (int) Math.ceil(this.itemRepo.size() / (double) ME_COLUMNS);
 
         // Calculate the scroll based on how many widgetRows can be shown
-        int max = Math.max( 0, totalNumberOfRows - this.widgetRows );
+        int max = Math.max(0, totalNumberOfRows - this.widgetRows);
 
         // Update the scroll bar
-        this.scrollBar.setRange( 0, max, 2 );
+        this.scrollBar.setRange(0, max, 2);
     }
 
     private void updateMEWidgets()

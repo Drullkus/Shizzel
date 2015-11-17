@@ -27,12 +27,12 @@ public class CommonProxy
     }
 
     @SubscribeEvent
-    public void registerTextures( final TextureStitchEvent.Pre event )
+    public void registerTextures(final TextureStitchEvent.Pre event)
     {
-        for( EnumBlockTextures texture : EnumBlockTextures.VALUES )
+        for (EnumBlockTextures texture : EnumBlockTextures.VALUES)
         {
             Shizzel.logger.info("Shizzel textures loaded.");
-            texture.registerTexture( event.map );
+            texture.registerTexture(event.map);
         }
     }
 }

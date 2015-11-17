@@ -2,16 +2,17 @@ package us.drullk.shizzel.gui.appEng;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import appeng.api.AEApi;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import us.drullk.shizzel.gui.appEng.elements.AEStateIconsEnum;
 import us.drullk.shizzel.gui.appEng.elements.AbstractGuiButtonBase;
 import us.drullk.shizzel.gui.appEng.widget.IWidgetHost;
@@ -56,7 +57,7 @@ public abstract class AbstractGuiBase
          * @param r
          * Right X position.
          */
-        public Bounds( final int t, final int l, final int b, final int r )
+        public Bounds(final int t, final int l, final int b, final int r)
         {
             this.T = t;
             this.L = l;
@@ -111,8 +112,11 @@ public abstract class AbstractGuiBase
     private static final int TOOLTIP_BORDER_SIZE = 3;
 
     private static final int upgradeU = AEStateIconsEnum.UPGRADE_CARD_BACKGROUND.getU();
+
     private static final int upgradeV = AEStateIconsEnum.UPGRADE_CARD_BACKGROUND.getV();
+
     private static final int upgradeWidth = AEStateIconsEnum.UPGRADE_CARD_BACKGROUND.getWidth();
+
     private static final int upgradeHeight = AEStateIconsEnum.UPGRADE_CARD_BACKGROUND.getHeight();
 
     /**
@@ -120,48 +124,48 @@ public abstract class AbstractGuiBase
      */
     protected final List<String> tooltip = new ArrayList<String>();
 
-    public AbstractGuiBase( final Container container )
+    public AbstractGuiBase(final Container container)
     {
-        super( container );
+        super(container);
     }
 
-    private final void drawTooltipBackground( final Bounds bounds )
+    private final void drawTooltipBackground(final Bounds bounds)
     {
         // Background
-        this.drawGradientRect( bounds.L, bounds.T, bounds.R, bounds.B, AbstractGuiBase.TOOLTIP_COLOR_BACKGROUND,
-                AbstractGuiBase.TOOLTIP_COLOR_BACKGROUND );
+        this.drawGradientRect(bounds.L, bounds.T, bounds.R, bounds.B, AbstractGuiBase.TOOLTIP_COLOR_BACKGROUND,
+                AbstractGuiBase.TOOLTIP_COLOR_BACKGROUND);
 
         // Draw outer borders
-        this.drawTooltipBorders( bounds, AbstractGuiBase.TOOLTIP_COLOR_OUTER, AbstractGuiBase.TOOLTIP_COLOR_OUTER, 0 );
+        this.drawTooltipBorders(bounds, AbstractGuiBase.TOOLTIP_COLOR_OUTER, AbstractGuiBase.TOOLTIP_COLOR_OUTER, 0);
 
         // Adjust bounds for inner borders
-        bounds.T++ ;
-        bounds.L++ ;
-        bounds.B-- ;
-        bounds.R-- ;
+        bounds.T++;
+        bounds.L++;
+        bounds.B--;
+        bounds.R--;
 
         // Draw inner borders
-        this.drawTooltipBorders( bounds, AbstractGuiBase.TOOLTIP_COLOR_INNER_BEGIN, AbstractGuiBase.TOOLTIP_COLOR_INNER_END, 1 );
+        this.drawTooltipBorders(bounds, AbstractGuiBase.TOOLTIP_COLOR_INNER_BEGIN, AbstractGuiBase.TOOLTIP_COLOR_INNER_END, 1);
     }
 
-    private final void drawTooltipBorders( final Bounds bounds, final int colorStart, final int colorEnd, final int cornerExpansion )
+    private final void drawTooltipBorders(final Bounds bounds, final int colorStart, final int colorEnd, final int cornerExpansion)
     {
         // Left
-        this.drawGradientRect( bounds.L - 1, bounds.T - cornerExpansion, bounds.L, bounds.B + cornerExpansion, colorStart, colorEnd );
+        this.drawGradientRect(bounds.L - 1, bounds.T - cornerExpansion, bounds.L, bounds.B + cornerExpansion, colorStart, colorEnd);
 
         // Top
-        this.drawGradientRect( bounds.L, bounds.T - 1, bounds.R, bounds.T, colorStart, colorEnd );
+        this.drawGradientRect(bounds.L, bounds.T - 1, bounds.R, bounds.T, colorStart, colorEnd);
 
         // Right
-        this.drawGradientRect( bounds.R, bounds.T - cornerExpansion, bounds.R + 1, bounds.B + cornerExpansion, colorStart, colorEnd );
+        this.drawGradientRect(bounds.R, bounds.T - cornerExpansion, bounds.R + 1, bounds.B + cornerExpansion, colorStart, colorEnd);
 
         // Bottom
-        this.drawGradientRect( bounds.L, bounds.B, bounds.R, bounds.B + 1, colorStart, colorEnd );
+        this.drawGradientRect(bounds.L, bounds.B, bounds.R, bounds.B + 1, colorStart, colorEnd);
     }
 
-    private final boolean isPointWithinSlot( final Slot slot, final int x, final int y )
+    private final boolean isPointWithinSlot(final Slot slot, final int x, final int y)
     {
-        return GuiHelper.INSTANCE.isPointInGuiRegion( slot.yDisplayPosition, slot.xDisplayPosition, 16, 16, x, y, this.guiLeft, this.guiTop );
+        return GuiHelper.INSTANCE.isPointInGuiRegion(slot.yDisplayPosition, slot.xDisplayPosition, 16, 16, x, y, this.guiLeft, this.guiTop);
     }
 
     /**
@@ -172,24 +176,24 @@ public abstract class AbstractGuiBase
      * @param mouseY
      * @return True if click was handled.
      */
-    private final boolean nonLeftClickHandler_Buttons( final int mouseX, final int mouseY, final int mouseButton )
+    private final boolean nonLeftClickHandler_Buttons(final int mouseX, final int mouseY, final int mouseButton)
     {
-        if( mouseButton != GuiHelper.MOUSE_BUTTON_LEFT )
+        if (mouseButton != GuiHelper.MOUSE_BUTTON_LEFT)
         {
             // Mouse over button?
-            for( Object buttonObj : this.buttonList )
+            for (Object buttonObj : this.buttonList)
             {
                 // Cast
-                GuiButton button = (GuiButton)buttonObj;
+                GuiButton button = (GuiButton) buttonObj;
 
                 // Was mouse over the button?
-                if( button.mousePressed( this.mc, mouseX, mouseY ) )
+                if (button.mousePressed(this.mc, mouseX, mouseY))
                 {
                     // Play clicky sound
-                    button.func_146113_a( this.mc.getSoundHandler() );
+                    button.func_146113_a(this.mc.getSoundHandler());
 
                     // Call button click event
-                    this.onButtonClicked( button, mouseButton );
+                    this.onButtonClicked(button, mouseButton);
 
                     // Handled
                     return true;
@@ -200,22 +204,22 @@ public abstract class AbstractGuiBase
         return false;
     }
 
-    protected final boolean addTooltipFromButtons( final int mouseX, final int mouseY )
+    protected final boolean addTooltipFromButtons(final int mouseX, final int mouseY)
     {
         // Is the mouse over any buttons?
-        for( Object obj : this.buttonList )
+        for (Object obj : this.buttonList)
         {
             // Is it a base button?
-            if( obj instanceof AbstractGuiButtonBase)
+            if (obj instanceof AbstractGuiButtonBase)
             {
                 // Cast
-                AbstractGuiButtonBase currentButton = (AbstractGuiButtonBase)obj;
+                AbstractGuiButtonBase currentButton = (AbstractGuiButtonBase) obj;
 
                 // Is the mouse over it?
-                if( currentButton.isMouseOverButton( mouseX, mouseY ) )
+                if (currentButton.isMouseOverButton(mouseX, mouseY))
                 {
                     // Get the tooltip
-                    currentButton.getTooltip( this.tooltip );
+                    currentButton.getTooltip(this.tooltip);
 
                     // And stop searching
                     return true;
@@ -233,15 +237,15 @@ public abstract class AbstractGuiBase
      * @param mouseX
      * @param mouseY
      */
-    protected final void drawAEToolAndUpgradeSlots( final float alpha, final int mouseX, final int mouseY )
+    protected final void drawAEToolAndUpgradeSlots(final float alpha, final int mouseX, final int mouseY)
     {
-        Minecraft.getMinecraft().renderEngine.bindTexture( AEStateIconsEnum.AE_STATES_TEXTURE );
+        Minecraft.getMinecraft().renderEngine.bindTexture(AEStateIconsEnum.AE_STATES_TEXTURE);
 
         // Locate any upgrade or network slots
-        for( int i = 0; i < this.inventorySlots.inventorySlots.size(); i++ )
+        for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i++)
         {
             // Get the slot
-            Slot slot = (Slot)this.inventorySlots.inventorySlots.get( i );
+            Slot slot = (Slot) this.inventorySlots.inventorySlots.get(i);
 
             // Is it network or upgrade?
             /*if( ( slot instanceof SlotNetworkTool ) || ( slot.inventory instanceof UpgradeInventory ) )
@@ -262,21 +266,21 @@ public abstract class AbstractGuiBase
      * @param posY
      * Y anchor position to draw the tooltip. Generally the mouse's Y position.
      */
-    protected final void drawTooltip( int posX, int posY, final boolean clearTooltipAfterDraw )
+    protected final void drawTooltip(int posX, int posY, final boolean clearTooltipAfterDraw)
     {
-        if( !this.tooltip.isEmpty() )
+        if (!this.tooltip.isEmpty())
         {
             // Disable rescaling
-            GL11.glDisable( GL12.GL_RESCALE_NORMAL );
+            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
             // Disable lighting
-            GL11.glDisable( GL11.GL_LIGHTING );
+            GL11.glDisable(GL11.GL_LIGHTING);
 
             // Disable depth testing
-            GL11.glDisable( GL11.GL_DEPTH_TEST );
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
 
             // Bounds check the position
-            if( posY < 0 )
+            if (posY < 0)
             {
                 posY = 0;
             }
@@ -285,13 +289,13 @@ public abstract class AbstractGuiBase
             int maxStringLength_px = 0;
 
             // Get max string length from lines in the list
-            for( String string : this.tooltip )
+            for (String string : this.tooltip)
             {
                 // Get the length of the string
-                int stringLen = this.mc.fontRenderer.getStringWidth( string );
+                int stringLen = this.mc.fontRenderer.getStringWidth(string);
 
                 // Is it larger than the previous length?
-                if( stringLen > maxStringLength_px )
+                if (stringLen > maxStringLength_px)
                 {
                     // Set it to maximum
                     maxStringLength_px = stringLen;
@@ -306,13 +310,13 @@ public abstract class AbstractGuiBase
             int tooltipHeight = AbstractGuiBase.TOOLTIP_EMPTY_HEIGHT;
 
             // Adjust height based on the number of lines
-            if( this.tooltip.size() > 1 )
+            if (this.tooltip.size() > 1)
             {
                 // Calculate the line height
-                int lineHeight = ( this.tooltip.size() - 1 ) * AbstractGuiBase.TOOLTIP_LINE_HEIGHT;
+                int lineHeight = (this.tooltip.size() - 1) * AbstractGuiBase.TOOLTIP_LINE_HEIGHT;
 
                 // Adjust the height
-                tooltipHeight += ( AbstractGuiBase.TOOLTIP_HEIGHT_MARGIN + lineHeight );
+                tooltipHeight += (AbstractGuiBase.TOOLTIP_HEIGHT_MARGIN + lineHeight);
             }
 
             // Get the current z level
@@ -322,23 +326,23 @@ public abstract class AbstractGuiBase
             this.zLevel = 300;
 
             // Tooltip boundary
-            Bounds bounds = new Bounds( posY - AbstractGuiBase.TOOLTIP_BORDER_SIZE, posX - AbstractGuiBase.TOOLTIP_BORDER_SIZE, posY + tooltipHeight +
-                    AbstractGuiBase.TOOLTIP_BORDER_SIZE, posX + maxStringLength_px + AbstractGuiBase.TOOLTIP_BORDER_SIZE );
+            Bounds bounds = new Bounds(posY - AbstractGuiBase.TOOLTIP_BORDER_SIZE, posX - AbstractGuiBase.TOOLTIP_BORDER_SIZE, posY + tooltipHeight +
+                    AbstractGuiBase.TOOLTIP_BORDER_SIZE, posX + maxStringLength_px + AbstractGuiBase.TOOLTIP_BORDER_SIZE);
 
             // Draw the background and borders
-            this.drawTooltipBackground( bounds );
+            this.drawTooltipBackground(bounds);
 
             // Draw each line
-            for( int index = 0; index < this.tooltip.size(); index++ )
+            for (int index = 0; index < this.tooltip.size(); index++)
             {
                 // Get the line
-                String line = this.tooltip.get( index );
+                String line = this.tooltip.get(index);
 
                 // Draw the line
-                this.mc.fontRenderer.drawStringWithShadow( line, posX, posY, -1 );
+                this.mc.fontRenderer.drawStringWithShadow(line, posX, posY, -1);
 
                 // Is this the first line?
-                if( index == 0 )
+                if (index == 0)
                 {
                     // Add the margin
                     posY += AbstractGuiBase.TOOLTIP_HEIGHT_MARGIN;
@@ -352,16 +356,16 @@ public abstract class AbstractGuiBase
             this.zLevel = prevZlevel;
 
             // Reenable lighting
-            GL11.glEnable( GL11.GL_LIGHTING );
+            GL11.glEnable(GL11.GL_LIGHTING);
 
             // Reenable depth testing
-            GL11.glEnable( GL11.GL_DEPTH_TEST );
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
 
             // Reenable scaling
-            GL11.glEnable( GL12.GL_RESCALE_NORMAL );
+            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 
             // Clear the tooltip
-            if( clearTooltipAfterDraw )
+            if (clearTooltipAfterDraw)
             {
                 this.tooltip.clear();
             }
@@ -375,16 +379,16 @@ public abstract class AbstractGuiBase
      * @param y
      * @return Slot the point is within, null if point is within no slots.
      */
-    protected final Slot getSlotAtPosition( final int x, final int y )
+    protected final Slot getSlotAtPosition(final int x, final int y)
     {
         // Loop over all slots
-        for( int i = 0; i < this.inventorySlots.inventorySlots.size(); i++ )
+        for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i++)
         {
             // Get the slot
-            Slot slot = (Slot)this.inventorySlots.inventorySlots.get( i );
+            Slot slot = (Slot) this.inventorySlots.inventorySlots.get(i);
 
             // Is the point within the slot?
-            if( this.isPointWithinSlot( slot, x, y ) )
+            if (this.isPointWithinSlot(slot, x, y))
             {
                 // Return the slot
                 return slot;
@@ -399,10 +403,10 @@ public abstract class AbstractGuiBase
      * Called when the mouse is clicked.
      */
     @Override
-    protected void mouseClicked( final int mouseX, final int mouseY, final int mouseButton )
+    protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton)
     {
 
-        if( nonLeftClickHandler_Buttons( mouseX, mouseY, mouseButton ) )
+        if (this.nonLeftClickHandler_Buttons(mouseX, mouseY, mouseButton))
         {
             return;
         }
@@ -427,7 +431,7 @@ public abstract class AbstractGuiBase
         }*/
 
         // Pass to super
-        super.mouseClicked( mouseX, mouseY, mouseButton );
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     /**
@@ -436,7 +440,7 @@ public abstract class AbstractGuiBase
      * @param button
      * @param mouseButton
      */
-    protected void onButtonClicked( final GuiButton button, final int mouseButton )
+    protected void onButtonClicked(final GuiButton button, final int mouseButton)
     {
     }
 
@@ -447,9 +451,9 @@ public abstract class AbstractGuiBase
      * @see #onButtonClicked(GuiButton, int )
      */
     @Override
-    public final void actionPerformed( final GuiButton button )
+    public final void actionPerformed(final GuiButton button)
     {
-        this.onButtonClicked( button, GuiHelper.MOUSE_BUTTON_LEFT );
+        this.onButtonClicked(button, GuiHelper.MOUSE_BUTTON_LEFT);
     }
 
     /**

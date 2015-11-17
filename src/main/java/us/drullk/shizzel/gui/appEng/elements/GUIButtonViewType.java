@@ -10,9 +10,9 @@ public class GUIButtonViewType extends AbstractStateGuiButton
 {
     private String tooltipViewType = "";
 
-    public GUIButtonViewType( final int ID, final int xPosition, final int yPosition, final int width, final int height )
+    public GUIButtonViewType(final int ID, final int xPosition, final int yPosition, final int width, final int height)
     {
-        super( ID, xPosition, yPosition, width, height, AEStateIconsEnum.VIEW_TYPE_ALL, 0, 0, AEStateIconsEnum.REGULAR_BUTTON );
+        super(ID, xPosition, yPosition, width, height, AEStateIconsEnum.VIEW_TYPE_ALL, 0, 0, AEStateIconsEnum.REGULAR_BUTTON);
         this.setViewMode(ViewItems.ALL);
     }
 

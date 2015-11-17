@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.Gui;
 import us.drullk.shizzel.utils.GuiHelper;
-import us.drullk.shizzel.utils.Helper;
 
 public abstract class AbstractWidget extends Gui
 {

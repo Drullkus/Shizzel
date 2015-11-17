@@ -1,23 +1,26 @@
 package us.drullk.shizzel.networking.appEng;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
 import appeng.api.config.SortDir;
 import appeng.api.config.SortOrder;
 import appeng.api.config.ViewItems;
 import appeng.api.storage.data.IAEItemStack;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import us.drullk.shizzel.appEng.enumList.EnumCache;
 import us.drullk.shizzel.container.appEng.ContainerChiselingTerminal;
 
-public class PacketChiselingTerminalServer
-        extends AbstractPacketServer
+public class PacketChiselingTerminalServer extends AbstractPacketServer
 {
+
     private static final byte MODE_REQUEST_FULL_LIST = 1;
+
     private static final byte MODE_REQUEST_EXTRACTION = 2;
+
     private static final byte MODE_REQUEST_DEPOSIT = 3;
+
     private static final byte MODE_REQUEST_DEPOSIT_REGION = 5;
+
     private static final byte MODE_REQUEST_SET_SORT = 6;
-    private static final byte MODE_REQUEST_AUTO_CRAFT = 8;
 
     /**
      * Extracted or deposited item.
@@ -55,35 +58,16 @@ public class PacketChiselingTerminalServer
     private ViewItems viewMode;
 
     /**
-     * Items to set the crafting grid to.
-     */
-    private IAEItemStack[] gridItems;
-
-    /**
-     * Create a packet to request to autocraft the specified item.
+     * Creates a packet letting the server know the user would like to
+     * deposition whatever they are holding into the ME network.
      *
      * @param player
-     * @param result
      * @return
      */
-    public PacketChiselingTerminalServer createRequestAutoCraft( final EntityPlayer player, final IAEItemStack result )
+    public PacketChiselingTerminalServer createRequestDeposit(final EntityPlayer player, final int mouseButton)
     {
         // Set the player
-        this.entityPlayer = player;
-
-        // Set the mode
-        this.mode = PacketChiselingTerminalServer.MODE_REQUEST_AUTO_CRAFT;
-
-        // Set the result
-        this.itemStack = result;
-
-        return this;
-    }
-
-    public PacketChiselingTerminalServer createRequestDeposit( final EntityPlayer player, final int mouseButton )
-    {
-        // Set the player
-        this.entityPlayer = player;
+        this.player = player;
 
         // Set the mode
         this.mode = PacketChiselingTerminalServer.MODE_REQUEST_DEPOSIT;
@@ -102,10 +86,10 @@ public class PacketChiselingTerminalServer
      * @param slotNumber
      * @return
      */
-    public PacketChiselingTerminalServer createRequestDepositRegion( final EntityPlayer player, final int slotNumber )
+    public PacketChiselingTerminalServer createRequestDepositRegion(final EntityPlayer player, final int slotNumber)
     {
         // Set the player
-        this.entityPlayer = player;
+        this.player = player;
 
         // Set the mode
         this.mode = PacketChiselingTerminalServer.MODE_REQUEST_DEPOSIT_REGION;
@@ -125,11 +109,11 @@ public class PacketChiselingTerminalServer
      * @param mouseButton
      * @return
      */
-    public PacketChiselingTerminalServer createRequestExtract( final EntityPlayer player, final IAEItemStack itemStack, final int mouseButton,
-            final boolean isShiftHeld )
+    public PacketChiselingTerminalServer createRequestExtract(final EntityPlayer player, final IAEItemStack itemStack, final int mouseButton,
+            final boolean isShiftHeld)
     {
         // Set player
-        this.entityPlayer = player;
+        this.player = player;
 
         // Set mode
         this.mode = PacketChiselingTerminalServer.MODE_REQUEST_EXTRACTION;
@@ -153,10 +137,10 @@ public class PacketChiselingTerminalServer
      *
      * @param player
      */
-    public PacketChiselingTerminalServer createRequestFullList( final EntityPlayer player )
+    public PacketChiselingTerminalServer createRequestFullList(final EntityPlayer player)
     {
         // Set the player
-        this.entityPlayer = player;
+        this.player = player;
 
         // Set the mode
         this.mode = PacketChiselingTerminalServer.MODE_REQUEST_FULL_LIST;
@@ -172,11 +156,11 @@ public class PacketChiselingTerminalServer
      * @param direction
      * @return
      */
-    public PacketChiselingTerminalServer createRequestSetSort( final EntityPlayer player, final SortOrder order, final SortDir direction,
-            final ViewItems viewMode )
+    public PacketChiselingTerminalServer createRequestSetSort(final EntityPlayer player, final SortOrder order, final SortDir direction,
+            final ViewItems viewMode)
     {
         // Set the player
-        this.entityPlayer = player;
+        this.player = player;
 
         // Set the mode
         this.mode = PacketChiselingTerminalServer.MODE_REQUEST_SET_SORT;
@@ -193,53 +177,47 @@ public class PacketChiselingTerminalServer
     public void execute()
     {
         // If the player is not null, and they have the ACT container open
-        if( ( this.entityPlayer != null ) && ( this.entityPlayer.openContainer instanceof ContainerChiselingTerminal) )
+        if ((this.player != null) && (this.player.openContainer instanceof ContainerChiselingTerminal))
         {
-            switch ( this.mode )
+            switch (this.mode)
             {
             case PacketChiselingTerminalServer.MODE_REQUEST_FULL_LIST:
                 // Request the full list
-                ( (ContainerChiselingTerminal)this.entityPlayer.openContainer ).onClientRequestFullUpdate(this.entityPlayer);
+                ((ContainerChiselingTerminal) this.player.openContainer).onClientRequestFullUpdate(this.player);
                 break;
 
             case PacketChiselingTerminalServer.MODE_REQUEST_EXTRACTION:
                 // Request extraction
-                ( (ContainerChiselingTerminal)this.entityPlayer.openContainer ).onClientRequestExtract(this.entityPlayer, this.itemStack,
+                ((ContainerChiselingTerminal) this.player.openContainer).onClientRequestExtract(this.player, this.itemStack,
                         this.mouseButton, this.isShiftHeld);
                 break;
 
             case PacketChiselingTerminalServer.MODE_REQUEST_DEPOSIT:
                 // Request deposit
-                ( (ContainerChiselingTerminal)this.entityPlayer.openContainer ).onClientRequestDeposit(this.entityPlayer, this.mouseButton);
+                ((ContainerChiselingTerminal) this.player.openContainer).onClientRequestDeposit(this.player, this.mouseButton);
                 break;
 
             case PacketChiselingTerminalServer.MODE_REQUEST_DEPOSIT_REGION:
                 // Request deposit region
-                ( (ContainerChiselingTerminal)this.entityPlayer.openContainer ).onClientRequestDepositRegion(this.entityPlayer, this.slotNumber);
+                ((ContainerChiselingTerminal) this.player.openContainer).onClientRequestDepositRegion(this.player, this.slotNumber);
                 break;
 
             case PacketChiselingTerminalServer.MODE_REQUEST_SET_SORT:
                 // Request set sort
-                ( (ContainerChiselingTerminal)this.entityPlayer.openContainer ).onClientRequestSetSort(this.sortingOrder,
+                ((ContainerChiselingTerminal) this.player.openContainer).onClientRequestSetSort(this.sortingOrder,
                         this.sortingDirection, this.viewMode);
-                break;
-
-            case PacketChiselingTerminalServer.MODE_REQUEST_AUTO_CRAFT:
-                // Request auto-crafting
-                ( (ContainerChiselingTerminal)this.entityPlayer.openContainer ).onClientRequestAutoCraft(this.entityPlayer, this.itemStack);
-                break;
             }
         }
     }
 
     @Override
-    public void readData( final ByteBuf stream )
+    public void readData(final ByteBuf stream)
     {
-        switch ( this.mode )
+        switch (this.mode)
         {
         case PacketChiselingTerminalServer.MODE_REQUEST_EXTRACTION:
             // Read the item
-            this.itemStack = AbstractPacket.readAEItemStack( stream );
+            this.itemStack = AbstractPacket.readAEItemStack(stream);
 
             // Read the mouse button
             this.mouseButton = stream.readInt();
@@ -264,51 +242,41 @@ public class PacketChiselingTerminalServer
             this.sortingOrder = EnumCache.AE_SORT_ORDERS[stream.readInt()];
             this.viewMode = EnumCache.AE_VIEW_ITEMS[stream.readInt()];
             break;
-
-        case PacketChiselingTerminalServer.MODE_REQUEST_AUTO_CRAFT:
-            // Read the requested item
-            this.itemStack = AbstractPacket.readAEItemStack( stream );
-            break;
         }
 
     }
 
     @Override
-    public void writeData( final ByteBuf stream )
+    public void writeData(final ByteBuf stream)
     {
-        switch ( this.mode )
+        switch (this.mode)
         {
         case PacketChiselingTerminalServer.MODE_REQUEST_EXTRACTION:
             // Write the itemstack
-            AbstractPacket.writeAEItemStack( this.itemStack, stream );
+            AbstractPacket.writeAEItemStack(this.itemStack, stream);
 
             // Write the mouse button
-            stream.writeInt( this.mouseButton );
+            stream.writeInt(this.mouseButton);
 
             // Write the shift status
-            stream.writeBoolean( this.isShiftHeld );
+            stream.writeBoolean(this.isShiftHeld);
             break;
 
         case PacketChiselingTerminalServer.MODE_REQUEST_DEPOSIT:
             // Write the mouse button
-            stream.writeInt( this.mouseButton );
+            stream.writeInt(this.mouseButton);
             break;
 
         case PacketChiselingTerminalServer.MODE_REQUEST_DEPOSIT_REGION:
             // Write the slot number to the stream
-            stream.writeInt( this.slotNumber );
+            stream.writeInt(this.slotNumber);
             break;
 
         case PacketChiselingTerminalServer.MODE_REQUEST_SET_SORT:
             // Write the sorts
-            stream.writeInt( this.sortingDirection.ordinal() );
-            stream.writeInt( this.sortingOrder.ordinal() );
-            stream.writeInt( this.viewMode.ordinal() );
-            break;
-
-        case PacketChiselingTerminalServer.MODE_REQUEST_AUTO_CRAFT:
-            // Write the requested item
-            AbstractPacket.writeAEItemStack( this.itemStack, stream );
+            stream.writeInt(this.sortingDirection.ordinal());
+            stream.writeInt(this.sortingOrder.ordinal());
+            stream.writeInt(this.viewMode.ordinal());
             break;
         }
     }

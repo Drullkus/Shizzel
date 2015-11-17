@@ -47,19 +47,27 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     public static int VIEW_SLOT_MIN = 11, VIEW_SLOT_MAX = 15;
 
     private static String NBTTagInv = "ShizzelAEInv";
+
     private static String NBTTagSlot = "Slot#";
+
     private static String NBTTagSortOrder = "SortOrder";
+
     private static String NBTTagSortDirection = "SortDirection";
+
     private static String NBTTagViewMode = "ViewMode";
 
     private static double powerDrain = 0.5D;
 
     private static SortOrder defSortOrder = SortOrder.NAME;
+
     private static SortDir defSortDirection = SortDir.ASCENDING;
+
     private static ViewItems defViewItems = ViewItems.ALL;
 
     private SortOrder sortOrder = PartChiselingTerminal.defSortOrder;
+
     private SortDir sortDirection = PartChiselingTerminal.defSortDirection;
+
     private ViewItems viewMode = PartChiselingTerminal.defViewItems;
 
     private ItemStack[] slots = new ItemStack[PartChiselingTerminal.invSize];
@@ -84,30 +92,30 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
         IIcon side = EnumBlockTextures.BASE.getTexture();
 
-        iPartRenderHelper.setTexture( side );
-        iPartRenderHelper.setBounds( 4.0F, 4.0F, 13.0F, 12.0F, 12.0F, 14.0F );
-        iPartRenderHelper.renderInventoryBox( renderBlocks );
+        iPartRenderHelper.setTexture(side);
+        iPartRenderHelper.setBounds(4.0F, 4.0F, 13.0F, 12.0F, 12.0F, 14.0F);
+        iPartRenderHelper.renderInventoryBox(renderBlocks);
 
-        iPartRenderHelper.setTexture( side, side, side, EnumBlockTextures.CHISELING_TERMINAL.getTextures()[3], side, side );
-        iPartRenderHelper.setBounds( 2.0F, 2.0F, 14.0F, 14.0F, 14.0F, 16.0F );
-        iPartRenderHelper.renderInventoryBox( renderBlocks );
+        iPartRenderHelper.setTexture(side, side, side, EnumBlockTextures.CHISELING_TERMINAL.getTextures()[3], side, side);
+        iPartRenderHelper.setBounds(2.0F, 2.0F, 14.0F, 14.0F, 14.0F, 16.0F);
+        iPartRenderHelper.renderInventoryBox(renderBlocks);
 
-        ts.setBrightness( 0xD000D0 );
+        ts.setBrightness(0xD000D0);
 
-        iPartRenderHelper.setInvColor( 0xFFFFFF );
+        iPartRenderHelper.setInvColor(0xFFFFFF);
 
         iPartRenderHelper.renderInventoryFace(EnumBlockTextures.CHISELING_TERMINAL.getTextures()[3], ForgeDirection.SOUTH, renderBlocks);
 
-        iPartRenderHelper.setBounds( 3.0F, 3.0F, 15.0F, 13.0F, 13.0F, 16.0F );
+        iPartRenderHelper.setBounds(3.0F, 3.0F, 15.0F, 13.0F, 13.0F, 16.0F);
 
         iPartRenderHelper.setInvColor(AEColor.Transparent.blackVariant);
         iPartRenderHelper.renderInventoryFace(EnumBlockTextures.CHISELING_TERMINAL.getTextures()[0], ForgeDirection.SOUTH, renderBlocks);
 
         iPartRenderHelper.setInvColor(AEColor.Transparent.mediumVariant);
-        iPartRenderHelper.renderInventoryFace(EnumBlockTextures.CHISELING_TERMINAL.getTextures()[1], ForgeDirection.SOUTH, renderBlocks );
+        iPartRenderHelper.renderInventoryFace(EnumBlockTextures.CHISELING_TERMINAL.getTextures()[1], ForgeDirection.SOUTH, renderBlocks);
 
         iPartRenderHelper.setInvColor(AEColor.Transparent.whiteVariant);
-        iPartRenderHelper.renderInventoryFace(EnumBlockTextures.CHISELING_TERMINAL.getTextures()[2], ForgeDirection.SOUTH, renderBlocks );
+        iPartRenderHelper.renderInventoryFace(EnumBlockTextures.CHISELING_TERMINAL.getTextures()[2], ForgeDirection.SOUTH, renderBlocks);
 
         //helper.setBounds( 5.0F, 5.0F, 13.0F, 11.0F, 11.0F, 14.0F );
         //this.renderInventoryBusLights( helper, renderer );
@@ -129,9 +137,9 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
         iPartRenderHelper.setBounds(2.0F, 2.0F, 14.0F, 14.0F, 14.0F, 16.0F);
         iPartRenderHelper.renderBlock(x, y, z, renderBlocks);
 
-        if( this.isActive() )
+        if (this.isActive())
         {
-            Tessellator.instance.setBrightness( 0xD000D0 );
+            Tessellator.instance.setBrightness(0xD000D0);
         }
 
         this.rotateRenderer(renderBlocks, false);
@@ -152,7 +160,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
         this.rotateRenderer(renderBlocks, true);
 
         iPartRenderHelper.setBounds(5.0F, 5.0F, 12.0F, 11.0F, 11.0F, 13.0F);
-        this.renderStaticBusLights( x, y, z, iPartRenderHelper, renderBlocks );
+        this.renderStaticBusLights(x, y, z, iPartRenderHelper, renderBlocks);
     }
 
     @Override
@@ -170,8 +178,8 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     @Override
     public void getBoxes(IPartCollisionHelper iPartCollisionHelper)
     {
-        iPartCollisionHelper.addBox( 2.0D, 2.0D, 14.0D, 14.0D, 14.0D, 16.0D );
-        iPartCollisionHelper.addBox( 5.0D, 5.0D, 13.0D, 11.0D, 11.0D, 14.0D );
+        iPartCollisionHelper.addBox(2.0D, 2.0D, 14.0D, 14.0D, 14.0D, 16.0D);
+        iPartCollisionHelper.addBox(5.0D, 5.0D, 13.0D, 11.0D, 11.0D, 14.0D);
     }
 
     @Override
@@ -274,10 +282,10 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     {
         //TODO: Listener stuff
 
-        for( ContainerChiselingTerminal listener : this.listeners )
+        for (ContainerChiselingTerminal listener : this.listeners)
         {
             // Ensure the listener is still there
-            if( listener != null )
+            if (listener != null)
             {
                 listener.onViewCellChange();
             }
@@ -383,7 +391,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public double getPowerUsage()
+    public double getIdlePowerUsage()
     {
         return PartChiselingTerminal.powerDrain;
     }
@@ -401,9 +409,9 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public Object getClientGuiElement(EntityPlayer player )
+    public Object getClientGuiElement(EntityPlayer player)
     {
-        return new GUIChiselingTerminal( this, player );
+        return new GUIChiselingTerminal(this, player);
     }
 
     public SortDir getSortingDirection()
@@ -473,17 +481,17 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
         if (NBTData.hasKey(PartChiselingTerminal.NBTTagSortOrder))
         {
-            this.sortOrder = EnumCache.AE_SORT_ORDERS[NBTData.getInteger( PartChiselingTerminal.NBTTagSortOrder )];
+            this.sortOrder = EnumCache.AE_SORT_ORDERS[NBTData.getInteger(PartChiselingTerminal.NBTTagSortOrder)];
         }
 
         if (NBTData.hasKey(PartChiselingTerminal.NBTTagSortDirection))
         {
-            this.sortDirection = EnumCache.AE_SORT_DIRECTIONS[NBTData.getInteger( PartChiselingTerminal.NBTTagSortDirection )];
+            this.sortDirection = EnumCache.AE_SORT_DIRECTIONS[NBTData.getInteger(PartChiselingTerminal.NBTTagSortDirection)];
         }
 
         if (NBTData.hasKey(PartChiselingTerminal.NBTTagViewMode))
         {
-            this.viewMode = EnumCache.AE_VIEW_ITEMS[NBTData.getInteger( PartChiselingTerminal.NBTTagViewMode )];
+            this.viewMode = EnumCache.AE_VIEW_ITEMS[NBTData.getInteger(PartChiselingTerminal.NBTTagViewMode)];
         }
     }
 

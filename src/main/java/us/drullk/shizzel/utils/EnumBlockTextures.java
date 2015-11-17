@@ -6,18 +6,16 @@ import us.drullk.shizzel.Shizzel;
 
 public enum EnumBlockTextures
 {
-    BASE(new String[]{"base"}),
-    BUS_COLOR (new String[] {
+    BASE(new String[] { "base" }), BUS_COLOR(new String[] {
             "bus.color.border",
             "bus.color.light",
-            "bus.color.side" }),
-    CHISELING_TERMINAL(new String[]
-            {"part_chisel_term_dark", // Dark - Chisel Outline
-            "part_chisel_term_colored", // Color - Background
-            "part_chisel_term_bright", // Bright - Chisel Sheen
-            "part_chisel_term_border"}); // Border
+            "bus.color.side" }), CHISELING_TERMINAL(new String[] { "part_chisel_term_dark", // Dark - Chisel Outline
+                    "part_chisel_term_colored", // Color - Background
+                    "part_chisel_term_bright", // Bright - Chisel Sheen
+                    "part_chisel_term_border" }); // Border
 
     private String[] textureNames;
+
     private IIcon[] textures;
 
     public static final EnumBlockTextures[] VALUES = EnumBlockTextures.values();
@@ -30,11 +28,11 @@ public enum EnumBlockTextures
 
     public void registerTexture(TextureMap textureMap)
     {
-        if( textureMap.getTextureType() == 0 )
+        if (textureMap.getTextureType() == 0)
         {
             String header = Shizzel.MOD_ID + ":";
 
-            for( int i = 0; i < this.textureNames.length; i++ )
+            for (int i = 0; i < this.textureNames.length; i++)
             {
                 this.textures[i] = textureMap.registerIcon(header + this.textureNames[i]);
             }

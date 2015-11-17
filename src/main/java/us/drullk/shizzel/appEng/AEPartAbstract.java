@@ -62,8 +62,6 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
 
     protected int ownerID = -1;
 
-    protected double powerUsage;
-
     public final ItemStack associatedItem;
 
     public AEPartAbstract(final AEParts associatedPart)
@@ -76,6 +74,11 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
         return this.TE;
     }
 
+    public final IPartHost getHost()
+    {
+        return this.host;
+    }
+
     @MENetworkEventSubscribe
     public void setPower(MENetworkPowerStatusChange statusChange)
     {
@@ -86,10 +89,7 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
         }
     }
 
-    public double getPowerUsage()
-    {
-        return this.powerUsage;
-    }
+    public abstract double getIdlePowerUsage();
 
     public DimensionalCoord getLocation()
     {
@@ -448,46 +448,46 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
 
     public final void markForUpdate()
     {
-        if( this.host != null )
+        if (this.host != null)
         {
             this.host.markForUpdate();
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public void renderStaticBusLights( final int x, final int y, final int z, final IPartRenderHelper helper, final RenderBlocks renderer )
+    public void renderStaticBusLights(final int x, final int y, final int z, final IPartRenderHelper helper, final RenderBlocks renderer)
     {
         IIcon busColorTexture = EnumBlockTextures.BUS_COLOR.getTextures()[0];
 
         IIcon sideTexture = EnumBlockTextures.BUS_COLOR.getTextures()[2];
 
-        helper.setTexture( busColorTexture, busColorTexture, sideTexture, sideTexture, busColorTexture, busColorTexture );
+        helper.setTexture(busColorTexture, busColorTexture, sideTexture, sideTexture, busColorTexture, busColorTexture);
 
         // Render the box
-        helper.renderBlock( x, y, z, renderer );
+        helper.renderBlock(x, y, z, renderer);
 
         // Are we active?
-        if( this.isActive() )
+        if (this.isActive())
         {
             // Set the brightness
-            Tessellator.instance.setBrightness( 0xD000D0 );
+            Tessellator.instance.setBrightness(0xD000D0);
 
             // Set the color to match the cable
-            Tessellator.instance.setColorOpaque_I( this.host.getColor().blackVariant );
+            Tessellator.instance.setColorOpaque_I(this.host.getColor().blackVariant);
         }
         else
         {
             // Set the color to black
-            Tessellator.instance.setColorOpaque_I( 0 );
+            Tessellator.instance.setColorOpaque_I(0);
         }
 
         IIcon lightTexture = EnumBlockTextures.BUS_COLOR.getTextures()[1];
 
-        helper.renderFace( x, y, z, lightTexture, ForgeDirection.UP, renderer );
-        helper.renderFace( x, y, z, lightTexture, ForgeDirection.DOWN, renderer );
-        helper.renderFace( x, y, z, lightTexture, ForgeDirection.NORTH, renderer );
-        helper.renderFace( x, y, z, lightTexture, ForgeDirection.EAST, renderer );
-        helper.renderFace( x, y, z, lightTexture, ForgeDirection.SOUTH, renderer );
-        helper.renderFace( x, y, z, lightTexture, ForgeDirection.WEST, renderer );
+        helper.renderFace(x, y, z, lightTexture, ForgeDirection.UP, renderer);
+        helper.renderFace(x, y, z, lightTexture, ForgeDirection.DOWN, renderer);
+        helper.renderFace(x, y, z, lightTexture, ForgeDirection.NORTH, renderer);
+        helper.renderFace(x, y, z, lightTexture, ForgeDirection.EAST, renderer);
+        helper.renderFace(x, y, z, lightTexture, ForgeDirection.SOUTH, renderer);
+        helper.renderFace(x, y, z, lightTexture, ForgeDirection.WEST, renderer);
     }
 }

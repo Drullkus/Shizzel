@@ -1,5 +1,8 @@
 package us.drullk.shizzel.container.appEng;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.config.SortDir;
@@ -28,20 +31,22 @@ import us.drullk.shizzel.networking.appEng.PacketChiselingTerminalClient;
 import us.drullk.shizzel.utils.GuiHelper;
 import us.drullk.shizzel.utils.Helper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ContainerChiselingTerminal extends ContainerWithPlayerInventory implements IMEMonitorHandlerReceiver<IAEItemStack>
 {
     public static int VIEW_SLOT_XPOS = 206, VIEW_SLOT_YPOS = 8;
+
     private static int playerInvPosY = 85;
+
     private static int hotbarInvPosY = playerInvPosY + (renderSlotSize * 3) + 4;
 
     private int firstViewSlotNumber = -1, lastViewSlotNumber = -1;
 
     private PartChiselingTerminal chiselTerm;
+
     private EntityPlayer entityPlayer;
+
     private IMEMonitor<IAEItemStack> MEMonitor;
+
     private PlayerSource playerSource;
 
     public ContainerChiselingTerminal(PartChiselingTerminal chiselingTerminal, EntityPlayer player)
@@ -55,22 +60,22 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         //TODO:Setup more chisel stuffs
 
         SlotRestrictive viewSlot = null;
-        for( int viewSlotID = PartChiselingTerminal.VIEW_SLOT_MIN; viewSlotID <= PartChiselingTerminal.VIEW_SLOT_MAX; viewSlotID++ )
+        for (int viewSlotID = PartChiselingTerminal.VIEW_SLOT_MIN; viewSlotID <= PartChiselingTerminal.VIEW_SLOT_MAX; viewSlotID++)
         {
             int row = viewSlotID - PartChiselingTerminal.VIEW_SLOT_MIN;
-            int yPos = ContainerChiselingTerminal.VIEW_SLOT_YPOS + ( row * ContainerWithPlayerInventory.renderSlotSize );
+            int yPos = ContainerChiselingTerminal.VIEW_SLOT_YPOS + (row * ContainerWithPlayerInventory.renderSlotSize);
 
-            viewSlot = new SlotRestrictive( chiselTerm, viewSlotID, ContainerChiselingTerminal.VIEW_SLOT_XPOS, yPos );
+            viewSlot = new SlotRestrictive(this.chiselTerm, viewSlotID, ContainerChiselingTerminal.VIEW_SLOT_XPOS, yPos);
 
-            this.addSlotToContainer( viewSlot );
+            this.addSlotToContainer(viewSlot);
 
-            if( row == 0 )
+            if (row == 0)
             {
                 this.firstViewSlotNumber = viewSlot.slotNumber;
             }
         }
 
-        if( viewSlot != null )
+        if (viewSlot != null)
         {
             this.lastViewSlotNumber = viewSlot.slotNumber;
         }
@@ -93,13 +98,13 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         List<ItemStack> viewCells = new ArrayList<ItemStack>();
 
         Slot viewSlot;
-        for( int viewSlotIndex = this.firstViewSlotNumber; viewSlotIndex <= this.lastViewSlotNumber; viewSlotIndex++ )
+        for (int viewSlotIndex = this.firstViewSlotNumber; viewSlotIndex <= this.lastViewSlotNumber; viewSlotIndex++)
         {
             // Get the slot
-            viewSlot = this.getSlot( viewSlotIndex );
+            viewSlot = this.getSlot(viewSlotIndex);
 
             // Ensure the slot is not empty
-            if( !viewSlot.getHasStack() )
+            if (!viewSlot.getHasStack())
             {
                 continue;
             }
@@ -108,38 +113,38 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
             viewCells.add(viewSlot.getStack());
         }
 
-        return viewCells.toArray( new ItemStack[viewCells.size()] );
+        return viewCells.toArray(new ItemStack[viewCells.size()]);
     }
 
-    private boolean mergeWithViewCells( final ItemStack itemStack )
+    private boolean mergeWithViewCells(final ItemStack itemStack)
     {
         // Ensure the item a view cell
-        if( !this.chiselTerm.isItemValidForSlot( PartChiselingTerminal.VIEW_SLOT_MIN, itemStack ) )
+        if (!this.chiselTerm.isItemValidForSlot(PartChiselingTerminal.VIEW_SLOT_MIN, itemStack))
         {
             return false;
         }
 
         Slot viewSlot;
-        for( int viewSlotIndex = this.firstViewSlotNumber; viewSlotIndex <= this.lastViewSlotNumber; viewSlotIndex++ )
+        for (int viewSlotIndex = this.firstViewSlotNumber; viewSlotIndex <= this.lastViewSlotNumber; viewSlotIndex++)
         {
             // Get the slot
-            viewSlot = this.getSlot( viewSlotIndex );
+            viewSlot = this.getSlot(viewSlotIndex);
 
             // Is there a slot?
-            if( viewSlot == null )
+            if (viewSlot == null)
             {
                 // Somehow, there is a null slot
                 continue;
             }
 
             // Ensure the slot is empty
-            if( viewSlot.getHasStack() )
+            if (viewSlot.getHasStack())
             {
                 continue;
             }
 
             // Insert the view cell
-            viewSlot.putStack( itemStack.copy() );
+            viewSlot.putStack(itemStack.copy());
 
             // Clear the source stack
             itemStack.stackSize = 0;
@@ -155,7 +160,7 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
     public void onViewCellChange()
     {
         // Only client side
-        if( Helper.isClientSide() )
+        if (Helper.isClientSide())
         {
             // Update the gui
             this.updateGUIViewCells();
@@ -169,9 +174,9 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         Gui gui = Minecraft.getMinecraft().currentScreen;
 
         // Is that screen the gui for the ACT?
-        if( gui instanceof GUIChiselingTerminal)
+        if (gui instanceof GUIChiselingTerminal)
         {
-            ( (GUIChiselingTerminal)gui ).onViewCellsChanged( this.getViewCells() );
+            ((GUIChiselingTerminal) gui).onViewCellsChanged(this.getViewCells());
         }
     }
 
@@ -190,17 +195,17 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
     public ItemStack transferStackInSlot(EntityPlayer player, int slotNumber)
     {
         // Is this client side?
-        if( Helper.isClientSide() )
+        if (Helper.isClientSide())
         {
             // Do nothing.
             return null;
         }
 
         // Get the slot that was shift-clicked
-        Slot slot = (Slot)this.inventorySlots.get( slotNumber );
+        Slot slot = (Slot) this.inventorySlots.get(slotNumber);
 
         // Is there a valid slot with and item?
-        if( ( slot != null ) && ( slot.getHasStack() ) )
+        if ((slot != null) && (slot.getHasStack()))
         {
             boolean didMerge = false;
 
@@ -208,68 +213,68 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
             ItemStack slotStack = slot.getStack();
 
             // Attempt to merge with the ME network
-            didMerge = this.mergeWithMENetwork( slotStack );
+            didMerge = this.mergeWithMENetwork(slotStack);
 
             // Did we merge?
-            if( !didMerge )
+            if (!didMerge)
             {
                 // Attempt to merge with the hotbar
-                didMerge = this.mergeSlotWithHotbarInventory( slotStack );
+                didMerge = this.mergeSlotWithHotbarInventory(slotStack);
 
                 // Did we merge?
-                if( !didMerge )
+                if (!didMerge)
                 {
                     // Attempt to merge with the player inventory
-                    didMerge = this.mergeSlotWithPlayerInventory( slotStack );
+                    didMerge = this.mergeSlotWithPlayerInventory(slotStack);
                 }
             }
             // Was the slot clicked in the player or hotbar inventory?
-            else if( this.slotClickedWasInPlayerInventory( slotNumber ) || this.slotClickedWasInHotbarInventory( slotNumber ) )
+            else if (this.slotClickedWasInPlayerInventory(slotNumber) || this.slotClickedWasInHotbarInventory(slotNumber))
             {
                 // Did we merge?
-                if( !didMerge )
+                if (!didMerge)
                 {
                     // Attempt to merge with view cells
-                    didMerge = this.mergeWithViewCells( slotStack );
+                    didMerge = this.mergeWithViewCells(slotStack);
 
                     // Did we merge?
-                    if( !didMerge )
+                    if (!didMerge)
                     {
                         // Attempt to merge with the ME network
-                        didMerge = this.mergeWithMENetwork( slotStack );
+                        didMerge = this.mergeWithMENetwork(slotStack);
 
                         // Did we merge?
-                        if( !didMerge )
+                        if (!didMerge)
                         {
                             // Attempt to swap hotbar<->player inventory
-                            didMerge = this.swapSlotInventoryHotbar( slotNumber, slotStack );
+                            didMerge = this.swapSlotInventoryHotbar(slotNumber, slotStack);
                         }
                     }
                 }
             }
             // Was the slot clicked a view cell?
-            else if( ( slotNumber >= this.firstViewSlotNumber ) && ( slotNumber <= this.lastViewSlotNumber ) )
+            else if ((slotNumber >= this.firstViewSlotNumber) && (slotNumber <= this.lastViewSlotNumber))
             {
                 // Attempt to merge with the hotbar
-                didMerge = this.mergeSlotWithHotbarInventory( slotStack );
+                didMerge = this.mergeSlotWithHotbarInventory(slotStack);
 
                 // Did we merge?
-                if( !didMerge )
+                if (!didMerge)
                 {
                     // Attempt to merge with the player inventory
-                    didMerge = this.mergeSlotWithPlayerInventory( slotStack );
+                    didMerge = this.mergeSlotWithPlayerInventory(slotStack);
                 }
             }
 
             // Did we merge?
-            if( didMerge )
+            if (didMerge)
             {
 
                 // Did the merger drain the stack?
-                if( ( slotStack == null ) || ( slotStack.stackSize == 0 ) )
+                if ((slotStack == null) || (slotStack.stackSize == 0))
                 {
                     // Set the slot to have no item
-                    slot.putStack( null );
+                    slot.putStack(null);
                 }
                 else
                 {
@@ -324,35 +329,35 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
     }
 
     @Override
-    public void onContainerClosed( final EntityPlayer player )
+    public void onContainerClosed(final EntityPlayer player)
     {
         // Pass to super
-        super.onContainerClosed( player );
+        super.onContainerClosed(player);
 
-        if( this.chiselTerm != null )
+        if (this.chiselTerm != null)
         {
-            this.chiselTerm.removeListener( this );
+            this.chiselTerm.removeListener(this);
         }
 
         // Is this server side?
-        if( Helper.isServerSide() )
+        if (Helper.isServerSide())
         {
-            if( this.MEMonitor != null )
+            if (this.MEMonitor != null)
             {
-                this.MEMonitor.removeListener( this );
+                this.MEMonitor.removeListener(this);
             }
         }
     }
 
-    public void changeSlotsYOffset( final int deltaY )
+    public void changeSlotsYOffset(final int deltaY)
     {
-        for( Object slotObj : this.inventorySlots )
+        for (Object slotObj : this.inventorySlots)
         {
             // Get the slot
-            Slot slot = (Slot)slotObj;
+            Slot slot = (Slot) slotObj;
 
             // Skip view slots
-            if( ( slot.slotNumber >= this.firstViewSlotNumber ) && ( slot.slotNumber <= this.lastViewSlotNumber ) )
+            if ((slot.slotNumber >= this.firstViewSlotNumber) && (slot.slotNumber <= this.lastViewSlotNumber))
             {
                 continue;
             }
@@ -362,33 +367,33 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         }
     }
 
-    public void onClientRequestFullUpdate( final EntityPlayer player )
+    public void onClientRequestFullUpdate(final EntityPlayer player)
     {
         // Send the sorting info
-        new PacketChiselingTerminalClient().createSortingUpdate( player, this.chiselTerm.getSortOrder(),
-                this.chiselTerm.getSortingDirection(), this.chiselTerm.getViewMode() ).sendPacketToPlayer();
+        new PacketChiselingTerminalClient().createSortingUpdate(player, this.chiselTerm.getSortOrder(),
+                this.chiselTerm.getSortingDirection(), this.chiselTerm.getViewMode()).sendPacketToPlayer();
 
         // Ensure we have a monitor
-        if( this.MEMonitor != null )
+        if (this.MEMonitor != null)
         {
             // Get the full list
             IItemList<IAEItemStack> fullList = this.MEMonitor.getStorageList();
 
             // Send to the client
-            new PacketChiselingTerminalClient().createFullListUpdate( player, fullList ).sendPacketToPlayer();
+            new PacketChiselingTerminalClient().createFullListUpdate(player, fullList).sendPacketToPlayer();
         }
     }
 
-    public void onClientRequestExtract( final EntityPlayer player, final IAEItemStack requestedStack, final int mouseButton, final boolean isShiftHeld )
+    public void onClientRequestExtract(final EntityPlayer player, final IAEItemStack requestedStack, final int mouseButton, final boolean isShiftHeld)
     {
         // Ensure there is a player
-        if( player == null )
+        if (player == null)
         {
             return;
         }
 
         // Ensure there is an itemstack
-        if( ( requestedStack == null ) || ( requestedStack.getStackSize() == 0 ) )
+        if ((requestedStack == null) || (requestedStack.getStackSize() == 0))
         {
             return;
         }
@@ -398,16 +403,16 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
 
         // Determine the amount to extract
         int amountToExtract = 0;
-        switch ( mouseButton )
+        switch (mouseButton)
         {
         case GuiHelper.MOUSE_BUTTON_LEFT:
             // Full amount up to maxStackSize
-            amountToExtract = (int)Math.min( maxStackSize, requestedStack.getStackSize() );
+            amountToExtract = (int) Math.min(maxStackSize, requestedStack.getStackSize());
             break;
 
         case GuiHelper.MOUSE_BUTTON_RIGHT:
             // Is shift being held?
-            if( isShiftHeld )
+            if (isShiftHeld)
             {
                 // Extract 1
                 amountToExtract = 1;
@@ -417,15 +422,15 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
                 // Half amount up to half of maxStackSize
                 double halfRequest = requestedStack.getStackSize() / 2.0D;
                 double halfMax = maxStackSize / 2.0D;
-                halfRequest = Math.ceil( halfRequest );
-                halfMax = Math.ceil( halfMax );
-                amountToExtract = (int)Math.min( halfMax, halfRequest );
+                halfRequest = Math.ceil(halfRequest);
+                halfMax = Math.ceil(halfMax);
+                amountToExtract = (int) Math.min(halfMax, halfRequest);
             }
             break;
 
         case GuiHelper.MOUSE_WHEEL_MOTION:
             // Shift must be held
-            if( isShiftHeld )
+            if (isShiftHeld)
             {
                 // Extract 1
                 amountToExtract = 1;
@@ -433,7 +438,7 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         }
 
         // Ensure we have some amount to extract
-        if( amountToExtract <= 0 )
+        if (amountToExtract <= 0)
         {
             // Nothing to extract
             return;
@@ -443,22 +448,22 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         IAEItemStack toExtract = requestedStack.copy();
 
         // Set the size
-        toExtract.setStackSize( amountToExtract );
+        toExtract.setStackSize(amountToExtract);
 
         // Simulate the extraction
-        IAEItemStack extractedStack = this.MEMonitor.extractItems( toExtract, Actionable.SIMULATE, this.playerSource );
+        IAEItemStack extractedStack = this.MEMonitor.extractItems(toExtract, Actionable.SIMULATE, this.playerSource);
 
         // Did we extract anything?
-        if( ( extractedStack != null ) && ( extractedStack.getStackSize() > 0 ) )
+        if ((extractedStack != null) && (extractedStack.getStackSize() > 0))
         {
             // Was this a left-click and is shift being held?
-            if( ( mouseButton == GuiHelper.MOUSE_BUTTON_LEFT ) && isShiftHeld )
+            if ((mouseButton == GuiHelper.MOUSE_BUTTON_LEFT) && isShiftHeld)
             {
                 // Can we merge the item with the player inventory
-                if( player.inventory.addItemStackToInventory( extractedStack.getItemStack() ) )
+                if (player.inventory.addItemStackToInventory(extractedStack.getItemStack()))
                 {
                     // Merged with player inventory, extract the item
-                    this.MEMonitor.extractItems( toExtract, Actionable.MODULATE, this.playerSource );
+                    this.MEMonitor.extractItems(toExtract, Actionable.MODULATE, this.playerSource);
 
                     // Do not attempt to merge with what the player is holding.
                     return;
@@ -470,16 +475,16 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
             ItemStack playerHolding = player.inventory.getItemStack();
 
             // Is the player holding anything?
-            if( playerHolding != null )
+            if (playerHolding != null)
             {
                 // Can we merge with what the player is holding?
-                if( ( playerHolding.stackSize < maxStackSize ) && ( playerHolding.isItemEqual( extractedStack.getItemStack() ) ) )
+                if ((playerHolding.stackSize < maxStackSize) && (playerHolding.isItemEqual(extractedStack.getItemStack())))
                 {
                     // Determine how much room is left in the player holding stack
-                    amountToExtract = Math.min( amountToExtract, maxStackSize - playerHolding.stackSize );
+                    amountToExtract = Math.min(amountToExtract, maxStackSize - playerHolding.stackSize);
 
                     // Is there any room?
-                    if( amountToExtract <= 0 )
+                    if (amountToExtract <= 0)
                     {
                         // Can't merge, not enough space
                         return;
@@ -489,10 +494,10 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
                     playerHolding.stackSize += amountToExtract;
 
                     // Set what the player is holding
-                    player.inventory.setItemStack( playerHolding );
+                    player.inventory.setItemStack(playerHolding);
 
                     // Adjust extraction size
-                    toExtract.setStackSize( amountToExtract );
+                    toExtract.setStackSize(amountToExtract);
                 }
                 else
                 {
@@ -503,22 +508,22 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
             else
             {
                 // Set the extracted item(s) as what the player is holding
-                player.inventory.setItemStack( extractedStack.getItemStack() );
+                player.inventory.setItemStack(extractedStack.getItemStack());
             }
 
             // Extract the item(s) from the network
-            this.MEMonitor.extractItems( toExtract, Actionable.MODULATE, this.playerSource );
+            this.MEMonitor.extractItems(toExtract, Actionable.MODULATE, this.playerSource);
 
             // Send the update to the client
-            new PacketChiselingTerminalClient().createPlayerHoldingUpdate( player,
-                    AEApi.instance().storage().createItemStack( player.inventory.getItemStack() ) ).sendPacketToPlayer();
+            new PacketChiselingTerminalClient().createPlayerHoldingUpdate(player,
+                    AEApi.instance().storage().createItemStack(player.inventory.getItemStack())).sendPacketToPlayer();
         }
     }
 
-    public void onClientRequestDeposit( final EntityPlayer player, final int mouseButton )
+    public void onClientRequestDeposit(final EntityPlayer player, final int mouseButton)
     {
         // Ensure there is a player
-        if( player == null )
+        if (player == null)
         {
             return;
         }
@@ -527,7 +532,7 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         ItemStack playerHolding = player.inventory.getItemStack();
 
         // Is the player holding anything?
-        if( playerHolding == null )
+        if (playerHolding == null)
         {
             return;
         }
@@ -536,76 +541,76 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         IAEItemStack toInjectStack = AEApi.instance().storage().createItemStack(playerHolding);
 
         // Was it a right click or wheel movement?
-        boolean depositOne = ( mouseButton == GuiHelper.MOUSE_BUTTON_RIGHT ) || ( mouseButton == GuiHelper.MOUSE_WHEEL_MOTION );
+        boolean depositOne = (mouseButton == GuiHelper.MOUSE_BUTTON_RIGHT) || (mouseButton == GuiHelper.MOUSE_WHEEL_MOTION);
 
-        if( depositOne )
+        if (depositOne)
         {
             // Set stack size to 1
-            toInjectStack.setStackSize( 1 );
+            toInjectStack.setStackSize(1);
         }
 
         // Attempt to inject
         IAEItemStack leftOverStack = this.MEMonitor.injectItems(toInjectStack, Actionable.MODULATE, this.playerSource);
 
         // Was there anything left over?
-        if( ( leftOverStack != null ) && ( leftOverStack.getStackSize() > 0 ) )
+        if ((leftOverStack != null) && (leftOverStack.getStackSize() > 0))
         {
             // Were we only trying to inject one?
-            if( toInjectStack.getStackSize() == 1 )
+            if (toInjectStack.getStackSize() == 1)
             {
                 // No changes made
                 return;
             }
 
             // Set what was left over as the itemstack being held
-            player.inventory.setItemStack( leftOverStack.getItemStack() );
+            player.inventory.setItemStack(leftOverStack.getItemStack());
         }
         else
         {
             // Are we only depositing one, and there was more than 1 item?
-            if( ( depositOne ) && ( playerHolding.stackSize > 1 ) )
+            if ((depositOne) && (playerHolding.stackSize > 1))
             {
                 // Set the player holding one less
-                playerHolding.stackSize-- ;
-                player.inventory.setItemStack( playerHolding );
+                playerHolding.stackSize--;
+                player.inventory.setItemStack(playerHolding);
 
                 // Set the leftover stack to match
-                leftOverStack = AEApi.instance().storage().createItemStack( playerHolding );
+                leftOverStack = AEApi.instance().storage().createItemStack(playerHolding);
             }
             else
             {
                 // Set the player as holding nothing
-                player.inventory.setItemStack( null );
+                player.inventory.setItemStack(null);
             }
         }
 
-        new PacketChiselingTerminalClient().createPlayerHoldingUpdate( player, leftOverStack ).sendPacketToPlayer();
+        new PacketChiselingTerminalClient().createPlayerHoldingUpdate(player, leftOverStack).sendPacketToPlayer();
     }
 
-    public void onClientRequestDepositRegion( final EntityPlayer player, final int slotNumber )
+    public void onClientRequestDepositRegion(final EntityPlayer player, final int slotNumber)
     {
         List<Slot> slotsToDeposit = null;
 
         // Was the slot part of the player inventory?
-        if( this.slotClickedWasInPlayerInventory( slotNumber ) )
+        if (this.slotClickedWasInPlayerInventory(slotNumber))
         {
             // Get the items in the player inventory
             slotsToDeposit = this.getNonEmptySlotsFromPlayerInventory();
         }
         // Was the slot part of the hotbar?
-        else if( this.slotClickedWasInHotbarInventory( slotNumber ) )
+        else if (this.slotClickedWasInHotbarInventory(slotNumber))
         {
             // Get the items in the hotbar
             slotsToDeposit = this.getNonEmptySlotsFromHotbar();
         }
 
         // Do we have any slots to transfer?
-        if( slotsToDeposit != null )
+        if (slotsToDeposit != null)
         {
-            for( Slot slot : slotsToDeposit )
+            for (Slot slot : slotsToDeposit)
             {
                 // Ensure the slot is not null and has a stack
-                if( ( slot == null ) || ( !slot.getHasStack() ) )
+                if ((slot == null) || (!slot.getHasStack()))
                 {
                     continue;
                 }
@@ -614,19 +619,19 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
                 ItemStack slotStack = slot.getStack();
 
                 // Inject into the ME network
-                boolean didMerge = this.mergeWithMENetwork( slotStack );
+                boolean didMerge = this.mergeWithMENetwork(slotStack);
 
                 // Did any merge?
-                if( !didMerge )
+                if (!didMerge)
                 {
                     continue;
                 }
 
                 // Did the merger drain the stack?
-                if( ( slotStack == null ) || ( slotStack.stackSize == 0 ) )
+                if ((slotStack == null) || (slotStack.stackSize == 0))
                 {
                     // Set the slot to have no item
-                    slot.putStack( null );
+                    slot.putStack(null);
                 }
                 else
                 {
@@ -640,26 +645,26 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         }
     }
 
-    private boolean mergeWithMENetwork( final ItemStack itemStack )
+    private boolean mergeWithMENetwork(final ItemStack itemStack)
     {
         // Attempt to place in the ME system
-        IAEItemStack toInject = AEApi.instance().storage().createItemStack( itemStack );
+        IAEItemStack toInject = AEApi.instance().storage().createItemStack(itemStack);
 
         // Get what is left over after the injection
-        IAEItemStack leftOver = this.MEMonitor.injectItems( toInject, Actionable.MODULATE, this.playerSource );
+        IAEItemStack leftOver = this.MEMonitor.injectItems(toInject, Actionable.MODULATE, this.playerSource);
 
         // Do we have any left over?
-        if( ( leftOver != null ) && ( leftOver.getStackSize() > 0 ) )
+        if ((leftOver != null) && (leftOver.getStackSize() > 0))
         {
             // Did we inject any?
-            if( leftOver.getStackSize() == toInject.getStackSize() )
+            if (leftOver.getStackSize() == toInject.getStackSize())
             {
                 // No injection occurred
                 return false;
             }
 
             // Some was injected, adjust the slot stack size
-            itemStack.stackSize = (int)leftOver.getStackSize();
+            itemStack.stackSize = (int) leftOver.getStackSize();
 
             return true;
         }
@@ -670,21 +675,21 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
         return true;
     }
 
-    public void onClientRequestSetSort( final SortOrder order, final SortDir dir, final ViewItems viewMode )
+    public void onClientRequestSetSort(final SortOrder order, final SortDir dir, final ViewItems viewMode)
     {
-        this.chiselTerm.setSorts( order, dir, viewMode );
+        this.chiselTerm.setSorts(order, dir, viewMode);
     }
 
-    public void onClientRequestAutoCraft( final EntityPlayer player, final IAEItemStack result )
+    public void onClientRequestAutoCraft(final EntityPlayer player, final IAEItemStack result)
     {
         Platform.openGUI(player, this.chiselTerm.getHostTile(), this.chiselTerm.getSide(),
                 GuiBridge.GUI_CRAFTING_AMOUNT);
 
-        if( player.openContainer instanceof ContainerCraftAmount)
+        if (player.openContainer instanceof ContainerCraftAmount)
         {
-            ContainerCraftAmount cca = (ContainerCraftAmount)this.entityPlayer.openContainer;
+            ContainerCraftAmount cca = (ContainerCraftAmount) this.entityPlayer.openContainer;
 
-            cca.craftingItem.putStack( result.getItemStack() );
+            cca.craftingItem.putStack(result.getItemStack());
             cca.whatToMake = result;
 
             cca.detectAndSendChanges();

@@ -28,41 +28,43 @@ public final class GuiHelper
      */
     private final int[] COLOR_SHIFT_AMOUNT = new int[] { 0, 8, 16, 24 };
 
-    public static String shortenCount( final long count )
+    public static String shortenCount(final long count)
     {
         int unit = 1000;
 
         // Are there at least 1000?
-        if( count < unit )
-            return Long.toString( count );
+        if (count < unit)
+        {
+            return Long.toString(count);
+        }
 
         // Calculate the exponential
-        int exponential = (int)( Math.log( count ) / Math.log( unit ) );
+        int exponential = (int) (Math.log(count) / Math.log(unit));
 
         // Get the posfix char
-        char postfix = "KMBT".charAt( exponential - 1 );
+        char postfix = "KMBT".charAt(exponential - 1);
 
-        return String.format( "%.1f%c", ( count / Math.pow( unit, exponential ) ), postfix );
+        return String.format("%.1f%c", (count / Math.pow(unit, exponential)), postfix);
     }
 
-    public final byte[] convertPackedColorToARGB( final int color )
+    public final byte[] convertPackedColorToARGB(final int color)
     {
         byte[] colorBytes = new byte[COLOR_ARRAY_SIZE];
 
         // Extract bytes
-        for( int i = 0; i < COLOR_ARRAY_SIZE; i++ )
+        for (int i = 0; i < COLOR_ARRAY_SIZE; i++)
         {
             // Get byte
-            colorBytes[COLOR_ARRAY_SIZE - 1 - i] = (byte)( ( color >> this.COLOR_SHIFT_AMOUNT[i] ) & 0xFF );
+            colorBytes[COLOR_ARRAY_SIZE - 1 - i] = (byte) ((color >> this.COLOR_SHIFT_AMOUNT[i]) & 0xFF);
         }
 
         return colorBytes;
     }
 
-    public final int[] createColorGradient( final int fromColor, final int toColor, final int iterations )
+    public final int[] createColorGradient(final int fromColor, final int toColor, final int iterations)
     {
         // Is there enough iterations to create a gradient?
-        if( iterations < 3 )
+        if (iterations < 3)
         {
             return new int[] { fromColor, toColor };
         }
@@ -81,16 +83,16 @@ public final class GuiHelper
         int[] gradient = new int[iterations];
 
         // Extract bytes
-        for( int i = 0; i < COLOR_ARRAY_SIZE; i++ )
+        for (int i = 0; i < COLOR_ARRAY_SIZE; i++)
         {
             // Get fromColor byte
-            fromColorBytes[i] = ( fromColor >> this.COLOR_SHIFT_AMOUNT[i] ) & 0xFF;
+            fromColorBytes[i] = (fromColor >> this.COLOR_SHIFT_AMOUNT[i]) & 0xFF;
 
             // Get toColor byte
-            toColorBytes[i] = ( ( toColor >> this.COLOR_SHIFT_AMOUNT[i] ) & 0xFF );
+            toColorBytes[i] = ((toColor >> this.COLOR_SHIFT_AMOUNT[i]) & 0xFF);
 
             // Calculate step amount
-            stepAmount[i] = ( toColorBytes[i] - fromColorBytes[i] ) / (float)iterations;
+            stepAmount[i] = (toColorBytes[i] - fromColorBytes[i]) / (float) iterations;
 
             // Init the current color
             currentColor[i] = fromColorBytes[i];
@@ -99,18 +101,18 @@ public final class GuiHelper
         // Set the first color
         gradient[0] = fromColor;
 
-        for( int iteration = 1; iteration < iterations; iteration++ )
+        for (int iteration = 1; iteration < iterations; iteration++)
         {
             int result = 0;
 
             // Add the step amounts to the current color and incorporate into the result color
-            for( int i = 0; i < COLOR_ARRAY_SIZE; i++ )
+            for (int i = 0; i < COLOR_ARRAY_SIZE; i++)
             {
                 // Add the step amount
                 currentColor[i] += stepAmount[i];
 
                 // Add to result color
-                result += ( ( Math.round( currentColor[i] ) & 0xFF ) << this.COLOR_SHIFT_AMOUNT[i] );
+                result += ((Math.round(currentColor[i]) & 0xFF) << this.COLOR_SHIFT_AMOUNT[i]);
 
             }
 
@@ -125,44 +127,44 @@ public final class GuiHelper
         return gradient;
     }
 
-    public final boolean isPointInGuiRegion( final int top, final int left, final int height, final int width, final int pointX, final int pointY,
-            final int guiLeft, final int guiTop )
+    public final boolean isPointInGuiRegion(final int top, final int left, final int height, final int width, final int pointX, final int pointY,
+            final int guiLeft, final int guiTop)
     {
-        return this.isPointInRegion( top, left, height, width, pointX - guiLeft, pointY - guiTop );
+        return this.isPointInRegion(top, left, height, width, pointX - guiLeft, pointY - guiTop);
     }
 
-    public final boolean isPointInRegion( final int top, final int left, final int height, final int width, final int pointX, final int pointY )
+    public final boolean isPointInRegion(final int top, final int left, final int height, final int width, final int pointX, final int pointY)
     {
-        return ( pointX >= left ) && ( pointX <= ( left + width ) ) && ( pointY >= top ) && ( pointY <= ( top + height ) );
+        return (pointX >= left) && (pointX <= (left + width)) && (pointY >= top) && (pointY <= (top + height));
     }
 
-    public final float pingPongFromTime( double speedReduction, final float minValue, final float maxValue )
+    public final float pingPongFromTime(double speedReduction, final float minValue, final float maxValue)
     {
         // NOTE: If I make a math helper class, move this there
 
         // Sanity check for situations like pingPongFromTime( ?, 1.0F, 1.0F )
-        if( minValue == maxValue )
+        if (minValue == maxValue)
         {
             return minValue;
         }
 
         // Bounds check speed reduction
-        if( speedReduction <= 0 )
+        if (speedReduction <= 0)
         {
             speedReduction = Float.MIN_VALUE;
         }
 
         // Get the time modulated to 2000, then reduced
-        float time = (float)( ( System.currentTimeMillis() / speedReduction ) % 2000.F );
+        float time = (float) ((System.currentTimeMillis() / speedReduction) % 2000.F);
 
         // Offset by -1000 and take the abs
-        time = Math.abs( time - 1000.0F );
+        time = Math.abs(time - 1000.0F);
 
         // Convert time to a percentage
         float timePercentage = time / 1000.0F;
 
         // Get the position in the range we are now at
-        float rangePercentage = ( maxValue - minValue ) * timePercentage;
+        float rangePercentage = (maxValue - minValue) * timePercentage;
 
         // Add the range position back to min
         return minValue + rangePercentage;

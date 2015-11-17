@@ -31,10 +31,11 @@ public class ClientProxy extends CommonProxy
 
     }
 
+    @Override
     @SubscribeEvent
-    public void registerTextures( final TextureStitchEvent.Pre event )
+    public void registerTextures(final TextureStitchEvent.Pre event)
     {
-        for(EnumBlockTextures texture : EnumBlockTextures.VALUES)
+        for (EnumBlockTextures texture : EnumBlockTextures.VALUES)
         {
             texture.registerTexture(event.map);
         }

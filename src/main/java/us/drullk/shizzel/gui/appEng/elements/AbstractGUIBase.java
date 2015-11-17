@@ -10,7 +10,6 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import us.drullk.shizzel.utils.GuiHelper;
-import us.drullk.shizzel.utils.Helper;
 
 public abstract class AbstractGUIBase extends GuiContainer
 {

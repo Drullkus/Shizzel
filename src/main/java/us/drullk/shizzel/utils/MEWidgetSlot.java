@@ -13,9 +13,9 @@ public class MEWidgetSlot
 {
     private PrivateInventory internalInventory;
 
-    public MEWidgetSlot(int inventorySize ) throws Exception
+    public MEWidgetSlot(int inventorySize) throws Exception
     {
-        this.internalInventory = new PrivateInventory( "TC Inventory Bridge", inventorySize, 1 );
+        this.internalInventory = new PrivateInventory("TC Inventory Bridge", inventorySize, 1);
     }
 
     @Override
@@ -24,17 +24,17 @@ public class MEWidgetSlot
         return false;
     }
 
-    public void addSlot( final int index, final int posX, final int posY )
+    public void addSlot(final int index, final int posX, final int posY)
     {
         // Create the slot
-        Slot bridgeSlot = new Slot( this.internalInventory, index, posX, posY );
+        Slot bridgeSlot = new Slot(this.internalInventory, index, posX, posY);
 
         // Add the slot
         this.addSlotToContainer(bridgeSlot);
     }
 
-    public void setSlot( final int index, final ItemStack stack )
+    public void setSlot(final int index, final ItemStack stack)
     {
-        this.getSlot( index ).putStack(stack);
+        this.getSlot(index).putStack(stack);
     }
 }

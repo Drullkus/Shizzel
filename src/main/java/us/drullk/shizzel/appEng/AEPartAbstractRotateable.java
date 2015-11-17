@@ -1,6 +1,7 @@
 package us.drullk.shizzel.appEng;
 
-import appeng.api.parts.PartItemStack;
+import java.io.IOException;
+
 import appeng.util.Platform;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -11,8 +12,6 @@ import net.minecraft.util.Vec3;
 import us.drullk.shizzel.appEng.enumList.AEParts;
 import us.drullk.shizzel.utils.Helper;
 
-import java.io.IOException;
-
 public abstract class AEPartAbstractRotateable extends AEPartAbstract
 {
     private byte renderRotation = 0;
@@ -22,27 +21,27 @@ public abstract class AEPartAbstractRotateable extends AEPartAbstract
         super(associatedPart);
     }
 
-    protected void rotateRenderer( final RenderBlocks renderer, final boolean reset )
+    protected void rotateRenderer(final RenderBlocks renderer, final boolean reset)
     {
-        int rot = ( reset ? 0 : this.renderRotation );
+        int rot = (reset ? 0 : this.renderRotation);
         renderer.uvRotateBottom = renderer.uvRotateEast = renderer.uvRotateNorth = renderer.uvRotateSouth = renderer.uvRotateTop = renderer.uvRotateWest = rot;
     }
 
     @Override
-    public boolean onActivate( final EntityPlayer player, final Vec3 position )
+    public boolean onActivate(final EntityPlayer player, final Vec3 position)
     {
         TileEntity hte = this.TE;
 
-        if( !player.isSneaking() && Platform.isWrench(player, player.inventory.getCurrentItem(), hte.xCoord, hte.yCoord, hte.zCoord) )
+        if (!player.isSneaking() && Platform.isWrench(player, player.inventory.getCurrentItem(), hte.xCoord, hte.yCoord, hte.zCoord))
         {
-            if( Helper.isServerSide() )
+            if (Helper.isServerSide())
             {
-                if( ( this.renderRotation > 3 ) || ( this.renderRotation < 0 ) )
+                if ((this.renderRotation > 3) || (this.renderRotation < 0))
                 {
                     this.renderRotation = 0;
                 }
 
-                switch ( this.renderRotation )
+                switch (this.renderRotation)
                 {
                 case 0:
                     this.renderRotation = 1;
@@ -64,33 +63,33 @@ public abstract class AEPartAbstractRotateable extends AEPartAbstract
             return true;
         }
 
-        return super.onActivate( player, position );
+        return super.onActivate(player, position);
     }
 
     @Override
-    public void readFromNBT( final NBTTagCompound data )
+    public void readFromNBT(final NBTTagCompound data)
     {
-        super.readFromNBT( data );
+        super.readFromNBT(data);
 
-        if( data.hasKey( "partRotation" ) )
+        if (data.hasKey("partRotation"))
         {
-            this.renderRotation = data.getByte( "partRotation" );
+            this.renderRotation = data.getByte("partRotation");
         }
     }
 
     @Override
-    public boolean readFromStream( final ByteBuf stream ) throws IOException
+    public boolean readFromStream(final ByteBuf stream) throws IOException
     {
         boolean redraw = false;
 
         // Call super
-        redraw |= super.readFromStream( stream );
+        redraw |= super.readFromStream(stream);
 
         // Read the rotation
         byte streamRot = stream.readByte();
 
         // Did the rotaion change?
-        if( this.renderRotation != streamRot )
+        if (this.renderRotation != streamRot)
         {
             this.renderRotation = streamRot;
             redraw |= true;
@@ -100,20 +99,20 @@ public abstract class AEPartAbstractRotateable extends AEPartAbstract
     }
 
     @Override
-    public void writeToNBT( final NBTTagCompound data)
+    public void writeToNBT(final NBTTagCompound data)
     {
-        super.writeToNBT( data );
+        super.writeToNBT(data);
 
-        if( this.renderRotation != 0 )
+        if (this.renderRotation != 0)
         {
-            data.setByte( "partRotation", this.renderRotation );
+            data.setByte("partRotation", this.renderRotation);
         }
     }
 
     @Override
-    public void writeToStream( final ByteBuf stream ) throws IOException
+    public void writeToStream(final ByteBuf stream) throws IOException
     {
-        super.writeToStream( stream );
+        super.writeToStream(stream);
 
         stream.writeByte(this.renderRotation);
     }

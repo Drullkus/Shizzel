@@ -1,14 +1,14 @@
 package us.drullk.shizzel.gui.appEng;
 
-import net.minecraft.inventory.Container;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 import appeng.client.gui.AEBaseGui;
 import appeng.client.gui.widgets.GuiScrollbar;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import us.drullk.shizzel.gui.appEng.AbstractGuiBase;
+import net.minecraft.inventory.Container;
+import net.minecraft.util.ResourceLocation;
 import us.drullk.shizzel.utils.GuiHelper;
 
 /**
@@ -50,11 +50,11 @@ public abstract class AbstractGuiWithScrollbar
          * @param y
          * @param height
          */
-        public ScrollbarParams( final int x, final int y, final int height )
+        public ScrollbarParams(final int x, final int y, final int height)
         {
             this.scrollbarPosX = x;
             this.scrollbarPosY = y;
-            this.setHeight( height );
+            this.setHeight(height);
         }
 
         /**
@@ -62,7 +62,7 @@ public abstract class AbstractGuiWithScrollbar
          *
          * @param height
          */
-        void setHeight( final int height )
+        void setHeight(final int height)
         {
             this.scrollbarHeight = height;
             this.scrollbarVerticalBound = this.scrollbarHeight + this.scrollbarPosY;
@@ -78,10 +78,12 @@ public abstract class AbstractGuiWithScrollbar
      * Serves as a graphics call bridge for the scroll bar.
      */
     private AEBaseGui aeGuiBridge;
+
     /**
      * True if the scroll bar has mouse focus.
      */
     private boolean isScrollBarHeld = false;
+
     /**
      * The last Y position of the mouse when the scroll bar has mouse focus.
      */
@@ -92,9 +94,9 @@ public abstract class AbstractGuiWithScrollbar
      */
     private ScrollbarParams scrollParams;
 
-    public AbstractGuiWithScrollbar( final Container container )
+    public AbstractGuiWithScrollbar(final Container container)
     {
-        super( container );
+        super(container);
 
         // Create the scrollbar
         this.scrollBar = new GuiScrollbar();
@@ -104,13 +106,13 @@ public abstract class AbstractGuiWithScrollbar
      * Draw the foreground layer.
      */
     @Override
-    protected void drawGuiContainerForegroundLayer( final int mouseX, final int mouseY )
+    protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
         // Call super
-        super.drawGuiContainerForegroundLayer( mouseX, mouseY );
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
         // Draw the scroll bar
-        this.scrollBar.draw( this.aeGuiBridge );
+        this.scrollBar.draw(this.aeGuiBridge);
     }
 
     /**
@@ -124,39 +126,39 @@ public abstract class AbstractGuiWithScrollbar
      * Called when the player types a key.
      */
     @Override
-    protected void keyTyped( final char key, final int keyID )
+    protected void keyTyped(final char key, final int keyID)
     {
         // Home Key
-        if( keyID == Keyboard.KEY_HOME )
+        if (keyID == Keyboard.KEY_HOME)
         {
             // Move the scroll all the way to home
-            this.scrollBar.click( this.aeGuiBridge, this.scrollParams.scrollbarPosX + 1, this.scrollParams.scrollbarPosY + 1 );
-            this.scrollBar.wheel( 1 );
+            this.scrollBar.click(this.aeGuiBridge, this.scrollParams.scrollbarPosX + 1, this.scrollParams.scrollbarPosY + 1);
+            this.scrollBar.wheel(1);
             this.onScrollbarMoved();
         }
         // End Key
-        else if( keyID == Keyboard.KEY_END )
+        else if (keyID == Keyboard.KEY_END)
         {
             // Move the scroll all the way to end
-            this.scrollBar.click( this.aeGuiBridge, this.scrollParams.scrollbarPosX + 1, this.scrollParams.scrollbarVerticalBound );
+            this.scrollBar.click(this.aeGuiBridge, this.scrollParams.scrollbarPosX + 1, this.scrollParams.scrollbarVerticalBound);
             this.onScrollbarMoved();
 
         }
         // Up Key
-        else if( keyID == Keyboard.KEY_UP )
+        else if (keyID == Keyboard.KEY_UP)
         {
-            this.scrollBar.wheel( 1 );
+            this.scrollBar.wheel(1);
             this.onScrollbarMoved();
         }
         // Down Key
-        else if( keyID == Keyboard.KEY_DOWN )
+        else if (keyID == Keyboard.KEY_DOWN)
         {
-            this.scrollBar.wheel( -1 );
+            this.scrollBar.wheel(-1);
             this.onScrollbarMoved();
         }
         else
         {
-            super.keyTyped( key, keyID );
+            super.keyTyped(key, keyID);
         }
 
     }
@@ -165,11 +167,11 @@ public abstract class AbstractGuiWithScrollbar
      * Called when the mouse is clicked while the gui is open
      */
     @Override
-    protected void mouseClicked( final int mouseX, final int mouseY, final int mouseButton )
+    protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton)
     {
         // Is the mouse over the scroll bar area?
-        if( GuiHelper.INSTANCE.isPointInGuiRegion( this.scrollParams.scrollbarPosY, this.scrollParams.scrollbarPosX,
-                this.scrollParams.scrollbarHeight, this.scrollBar.getWidth(), mouseX, mouseY, this.guiLeft, this.guiTop ) )
+        if (GuiHelper.INSTANCE.isPointInGuiRegion(this.scrollParams.scrollbarPosY, this.scrollParams.scrollbarPosX,
+                this.scrollParams.scrollbarHeight, this.scrollBar.getWidth(), mouseX, mouseY, this.guiLeft, this.guiTop))
         {
             // The scroll bar now has mouse focus
             this.isScrollBarHeld = true;
@@ -178,7 +180,7 @@ public abstract class AbstractGuiWithScrollbar
             this.scrollHeldPrevY = mouseY;
 
             // Jump the scroll to the mouse
-            this.scrollBar.click( this.aeGuiBridge, mouseX - this.guiLeft, mouseY - this.guiTop );
+            this.scrollBar.click(this.aeGuiBridge, mouseX - this.guiLeft, mouseY - this.guiTop);
 
             // Update the subclass
             this.onScrollbarMoved();
@@ -188,7 +190,7 @@ public abstract class AbstractGuiWithScrollbar
         }
 
         // Call super
-        super.mouseClicked( mouseX, mouseY, mouseButton );
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     /**
@@ -201,26 +203,26 @@ public abstract class AbstractGuiWithScrollbar
      *
      * @param newHeight
      */
-    protected void setScrollBarHeight( final int newHeight )
+    protected void setScrollBarHeight(final int newHeight)
     {
-        this.scrollParams.setHeight( newHeight );
-        this.scrollBar.setHeight( newHeight );
+        this.scrollParams.setHeight(newHeight);
+        this.scrollBar.setHeight(newHeight);
     }
 
     @Override
-    public void drawScreen( final int mouseX, final int mouseY, final float mouseBtn )
+    public void drawScreen(final int mouseX, final int mouseY, final float mouseBtn)
     {
         // Call super
-        super.drawScreen( mouseX, mouseY, mouseBtn );
+        super.drawScreen(mouseX, mouseY, mouseBtn);
 
         // Is the mouse holding the scroll bar?
-        if( this.isScrollBarHeld )
+        if (this.isScrollBarHeld)
         {
             // Is the mouse button still being held down?
-            if( Mouse.isButtonDown( GuiHelper.MOUSE_BUTTON_LEFT ) )
+            if (Mouse.isButtonDown(GuiHelper.MOUSE_BUTTON_LEFT))
             {
                 // Has the Y changed?
-                if( mouseY == this.scrollHeldPrevY )
+                if (mouseY == this.scrollHeldPrevY)
                 {
                     return;
                 }
@@ -234,12 +236,12 @@ public abstract class AbstractGuiWithScrollbar
                 int repY = mouseY - this.guiTop;
 
                 // Has the mouse exceeded the 'upper' bound?
-                if( repY > this.scrollParams.scrollbarVerticalBound )
+                if (repY > this.scrollParams.scrollbarVerticalBound)
                 {
                     repY = this.scrollParams.scrollbarVerticalBound;
                 }
                 // Has the mouse exceeded the 'lower' bound?
-                else if( repY <= this.scrollParams.scrollbarPosY )
+                else if (repY <= this.scrollParams.scrollbarPosY)
                 {
                     repY = this.scrollParams.scrollbarPosY;
 
@@ -248,12 +250,12 @@ public abstract class AbstractGuiWithScrollbar
                 }
 
                 // Update the scroll bar
-                this.scrollBar.click( this.aeGuiBridge, this.scrollParams.scrollbarPosX + 1, repY );
+                this.scrollBar.click(this.aeGuiBridge, this.scrollParams.scrollbarPosX + 1, repY);
 
                 // Should we correct for zero?
-                if( correctForZero )
+                if (correctForZero)
                 {
-                    this.scrollBar.wheel( 1 );
+                    this.scrollBar.wheel(1);
                 }
 
                 // Inform the subclass the scrollbar has moved //
@@ -281,44 +283,44 @@ public abstract class AbstractGuiWithScrollbar
         this.scrollParams = this.getScrollbarParameters();
 
         // Setup the scroll bar
-        this.scrollBar.setLeft( this.scrollParams.scrollbarPosX ).setTop( this.scrollParams.scrollbarPosY )
-                .setHeight( this.scrollParams.scrollbarHeight );
+        this.scrollBar.setLeft(this.scrollParams.scrollbarPosX).setTop(this.scrollParams.scrollbarPosY)
+                .setHeight(this.scrollParams.scrollbarHeight);
 
         // No scrolling yet
-        this.scrollBar.setRange( 0, 0, 1 );
+        this.scrollBar.setRange(0, 0, 1);
 
         // Create the AE bridge
-        this.aeGuiBridge = new AEBaseGui( this.inventorySlots )
+        this.aeGuiBridge = new AEBaseGui(this.inventorySlots)
         {
             @Override
-            public void bindTexture( final String file )
+            public void bindTexture(final String file)
             {
-                this.bindTexture( "appliedenergistics2", file );
+                this.bindTexture("appliedenergistics2", file);
             }
 
             @Override
-            public void bindTexture( final String base, final String file )
+            public void bindTexture(final String base, final String file)
             {
-                AbstractGuiWithScrollbar.this.mc.getTextureManager().bindTexture( new ResourceLocation( base, "textures/" + file ) );
+                AbstractGuiWithScrollbar.this.mc.getTextureManager().bindTexture(new ResourceLocation(base, "textures/" + file));
             }
 
             @Override
-            public void drawBG( final int arg0, final int arg1, final int arg2, final int arg3 )
+            public void drawBG(final int arg0, final int arg1, final int arg2, final int arg3)
             {
                 // Ignored
             }
 
             @Override
-            public void drawFG( final int arg0, final int arg1, final int arg2, final int arg3 )
+            public void drawFG(final int arg0, final int arg1, final int arg2, final int arg3)
             {
                 // Ignored
             }
 
             @Override
-            public void drawTexturedModalRect( final int posX, final int posY, final int sourceOffsetX, final int sourceOffsetY, final int width,
-                    final int height )
+            public void drawTexturedModalRect(final int posX, final int posY, final int sourceOffsetX, final int sourceOffsetY, final int width,
+                    final int height)
             {
-                AbstractGuiWithScrollbar.this.drawTexturedModalRect( posX, posY, sourceOffsetX, sourceOffsetY, width, height );
+                AbstractGuiWithScrollbar.this.drawTexturedModalRect(posX, posY, sourceOffsetX, sourceOffsetY, width, height);
             }
         };
     }

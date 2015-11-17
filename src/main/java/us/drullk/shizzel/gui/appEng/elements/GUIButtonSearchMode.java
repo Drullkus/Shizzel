@@ -1,9 +1,10 @@
 package us.drullk.shizzel.gui.appEng.elements;
 
 import java.util.List;
-import net.minecraft.util.EnumChatFormatting;
+
 import appeng.api.config.SearchBoxMode;
 import appeng.core.localization.ButtonToolTips;
+import net.minecraft.util.EnumChatFormatting;
 
 public class GUIButtonSearchMode
         extends AbstractStateGuiButton
@@ -13,20 +14,20 @@ public class GUIButtonSearchMode
     public GUIButtonSearchMode(final int ID, final int xPosition, final int yPosition, final int buttonWidth, final int buttonHeight,
             final SearchBoxMode currentMode)
     {
-        super( ID, xPosition, yPosition, buttonWidth, buttonHeight, null, 0, 0, AEStateIconsEnum.REGULAR_BUTTON );
+        super(ID, xPosition, yPosition, buttonWidth, buttonHeight, null, 0, 0, AEStateIconsEnum.REGULAR_BUTTON);
 
-        this.setSearchMode( currentMode );
+        this.setSearchMode(currentMode);
     }
 
     @Override
-    public void getTooltip( final List<String> tooltip )
+    public void getTooltip(final List<String> tooltip)
     {
-        this.addAboutToTooltip( tooltip, ButtonToolTips.SearchMode.getLocal(), EnumChatFormatting.GRAY + this.tooltipMode );
+        this.addAboutToTooltip(tooltip, ButtonToolTips.SearchMode.getLocal(), EnumChatFormatting.GRAY + this.tooltipMode);
     }
 
-    public void setSearchMode( final SearchBoxMode mode )
+    public void setSearchMode(final SearchBoxMode mode)
     {
-        switch ( mode )
+        switch (mode)
         {
         case AUTOSEARCH:
             this.tooltipMode = ButtonToolTips.SearchMode_Auto.getLocal();

@@ -5,7 +5,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import us.drullk.shizzel.utils.IInventoryUpdateReceiver;
 
 public class PrivateInventory
         implements IInventory
@@ -14,20 +13,23 @@ public class PrivateInventory
     private static final String NBT_KEY_SLOT = "Slot";
 
     public ItemStack[] slots;
+
     public String customName;
+
     private int stackLimit;
+
     private IInventoryUpdateReceiver receiver = null;
 
-    public PrivateInventory( final String customName, final int size, final int stackLimit )
+    public PrivateInventory(final String customName, final int size, final int stackLimit)
     {
         this.slots = new ItemStack[size];
         this.customName = customName;
         this.stackLimit = stackLimit;
     }
 
-    public PrivateInventory( final String customName, final int size, final int stackLimit, final IInventoryUpdateReceiver receiver )
+    public PrivateInventory(final String customName, final int size, final int stackLimit, final IInventoryUpdateReceiver receiver)
     {
-        this( customName, size, stackLimit );
+        this(customName, size, stackLimit);
 
         this.receiver = receiver;
     }
@@ -38,27 +40,27 @@ public class PrivateInventory
     }
 
     @Override
-    public ItemStack decrStackSize( final int slotId, final int amount )
+    public ItemStack decrStackSize(final int slotId, final int amount)
     {
         // Get the stack
         ItemStack slotStack = this.slots[slotId];
         ItemStack resultStack = null;
 
         // Is the slot empty?
-        if( slotStack == null )
+        if (slotStack == null)
         {
             // Slot is empty
             return null;
         }
 
         // Calculate the amount to get
-        int decAmount = Math.min( amount, slotStack.stackSize );
+        int decAmount = Math.min(amount, slotStack.stackSize);
 
         // Calculate the remaining amount
         int remAmount = slotStack.stackSize - decAmount;
 
         // Is there anything remaining in the slot?
-        if( remAmount > 0 )
+        if (remAmount > 0)
         {
             this.slots[slotId].stackSize = remAmount;
         }
@@ -68,7 +70,7 @@ public class PrivateInventory
         }
 
         // Was any amount gotten?
-        if( decAmount > 0 )
+        if (decAmount > 0)
         {
             resultStack = slotStack.copy();
             resultStack.stackSize = decAmount;
@@ -98,13 +100,13 @@ public class PrivateInventory
     }
 
     @Override
-    public ItemStack getStackInSlot( final int index )
+    public ItemStack getStackInSlot(final int index)
     {
         return this.slots[index];
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing( final int slotId )
+    public ItemStack getStackInSlotOnClosing(final int slotId)
     {
         return this.slots[slotId];
     }
@@ -123,7 +125,7 @@ public class PrivateInventory
      * @param amount
      * @return The amount that was added.
      */
-    public int incrStackSize( final int slotId, final int amount )
+    public int incrStackSize(final int slotId, final int amount)
     {
         // Get the stack
         ItemStack slotStack = this.slots[slotId];
@@ -131,16 +133,16 @@ public class PrivateInventory
         // Assume none was added
         int added = 0;
 
-        if( slotStack != null )
+        if (slotStack != null)
         {
             // Calculate the stack limit
-            int stackLimit = Math.min( this.getInventoryStackLimit(), slotStack.getMaxStackSize() );
+            int stackLimit = Math.min(this.getInventoryStackLimit(), slotStack.getMaxStackSize());
 
             // Calculate how much can be added
-            added = Math.min( amount, stackLimit - slotStack.stackSize );
+            added = Math.min(amount, stackLimit - slotStack.stackSize);
 
             // Can any be added?
-            if( added > 0 )
+            if (added > 0)
             {
                 this.slots[slotId].stackSize += added;
                 this.markDirty();
@@ -158,10 +160,10 @@ public class PrivateInventory
     public boolean isEmpty()
     {
         // Loop over the slots
-        for( int index = 0; index < this.slots.length; ++index )
+        for (ItemStack slot : this.slots)
         {
             // Is this slot occupied?
-            if( this.slots[index] != null )
+            if (slot != null)
             {
                 // Inventory is not empty
                 return false;
@@ -173,49 +175,49 @@ public class PrivateInventory
     }
 
     @Override
-    public boolean isItemValidForSlot( final int slotId, final ItemStack itemStack )
+    public boolean isItemValidForSlot(final int slotId, final ItemStack itemStack)
     {
         // Assume it is not valid
         return false;
     }
 
     @Override
-    public boolean isUseableByPlayer( final EntityPlayer player )
+    public boolean isUseableByPlayer(final EntityPlayer player)
     {
         return true;
     }
 
-    public final void loadFromNBT( final NBTTagCompound data, final String tagName )
+    public final void loadFromNBT(final NBTTagCompound data, final String tagName)
     {
         // Ensure there is a data tag
-        if( data == null )
+        if (data == null)
         {
             return;
         }
 
         // Ensure the data has our inventory
-        if( !data.hasKey( tagName ) )
+        if (!data.hasKey(tagName))
         {
             return;
         }
 
         // Load the list
-        NBTTagList invList = data.getTagList( tagName, (byte)10 );
+        NBTTagList invList = data.getTagList(tagName, (byte) 10);
 
         // Load the inventory from the list
-        for( int index = 0; index < invList.tagCount(); index++ )
+        for (int index = 0; index < invList.tagCount(); index++)
         {
             // Get the compound
-            NBTTagCompound nbtCompound = invList.getCompoundTagAt( index );
+            NBTTagCompound nbtCompound = invList.getCompoundTagAt(index);
 
             // Get the slot number
-            int slotIndex = nbtCompound.getByte( PrivateInventory.NBT_KEY_SLOT ) & 0xFF;
+            int slotIndex = nbtCompound.getByte(PrivateInventory.NBT_KEY_SLOT) & 0xFF;
 
             // Validate the slot number
-            if( ( slotIndex >= 0 ) && ( slotIndex < this.slots.length ) )
+            if ((slotIndex >= 0) && (slotIndex < this.slots.length))
             {
                 // Load the itemstack
-                this.slots[slotIndex] = ItemStack.loadItemStackFromNBT( nbtCompound );
+                this.slots[slotIndex] = ItemStack.loadItemStackFromNBT(nbtCompound);
             }
         }
     }
@@ -223,9 +225,9 @@ public class PrivateInventory
     @Override
     public void markDirty()
     {
-        if( this.receiver != null )
+        if (this.receiver != null)
         {
-            this.receiver.onInventoryChanged( this );
+            this.receiver.onInventoryChanged(this);
         }
     }
 
@@ -234,10 +236,10 @@ public class PrivateInventory
     {
     }
 
-    public final void saveToNBT( final NBTTagCompound data, final String tagName )
+    public final void saveToNBT(final NBTTagCompound data, final String tagName)
     {
         // Ensure there is a data tag
-        if( data == null )
+        if (data == null)
         {
             return;
         }
@@ -246,37 +248,37 @@ public class PrivateInventory
         NBTTagList invList = new NBTTagList();
 
         // Write each slot into the list
-        for( int slotIndex = 0; slotIndex < this.slots.length; slotIndex++ )
+        for (int slotIndex = 0; slotIndex < this.slots.length; slotIndex++)
         {
             // Ensure the slot has something to write
-            if( this.slots[slotIndex] != null )
+            if (this.slots[slotIndex] != null)
             {
                 // Create the compound
                 NBTTagCompound nbtCompound = new NBTTagCompound();
 
                 // Set the slot number
-                nbtCompound.setByte( PrivateInventory.NBT_KEY_SLOT, (byte)slotIndex );
+                nbtCompound.setByte(PrivateInventory.NBT_KEY_SLOT, (byte) slotIndex);
 
                 // Save the inventory
-                this.slots[slotIndex].writeToNBT( nbtCompound );
+                this.slots[slotIndex].writeToNBT(nbtCompound);
 
                 // Add to the list
-                invList.appendTag( nbtCompound );
+                invList.appendTag(nbtCompound);
             }
         }
 
         // Write the list into the data
-        if( invList.tagCount() > 0 )
+        if (invList.tagCount() > 0)
         {
-            data.setTag( tagName, invList );
+            data.setTag(tagName, invList);
         }
     }
 
     @Override
-    public void setInventorySlotContents( final int slotId, final ItemStack itemStack )
+    public void setInventorySlotContents(final int slotId, final ItemStack itemStack)
     {
         // Is the stack size too large?
-        if( ( itemStack != null ) && ( itemStack.stackSize > this.getInventoryStackLimit() ) )
+        if ((itemStack != null) && (itemStack.stackSize > this.getInventoryStackLimit()))
         {
             itemStack.stackSize = this.getInventoryStackLimit();
         }
@@ -286,7 +288,7 @@ public class PrivateInventory
         this.markDirty();
     }
 
-    public void setReceiver( final IInventoryUpdateReceiver receiver )
+    public void setReceiver(final IInventoryUpdateReceiver receiver)
     {
         this.receiver = receiver;
     }

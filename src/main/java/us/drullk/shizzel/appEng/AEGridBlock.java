@@ -19,64 +19,28 @@ import appeng.api.util.DimensionalCoord;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class AEGridBlock implements IGridBlock
+public class AEGridBlock
+        implements IGridBlock
 {
+    /**
+     * The part using this gridblock.
+     */
+    protected AEPartAbstract part;
 
-    private AEPartAbstract part;
-
-    private AEColor color;
-
-    public AEGridBlock(AEPartAbstract partAbstract)
+    /**
+     * Create the gridblock for the specified part.
+     *
+     * @param part
+     */
+    public AEGridBlock(final AEPartAbstract part)
     {
-        this.part = partAbstract;
+        this.part = part;
     }
 
-    public IMEMonitor<IAEItemStack> getItemMonitor()
+    @Override
+    public EnumSet<ForgeDirection> getConnectableSides()
     {
-        IStorageGrid storageGrid = this.getStorageGrid();
-
-        if (storageGrid == null)
-        {
-            return null;
-        }
-
-        return storageGrid.getItemInventory();
-    }
-
-    public IStorageGrid getStorageGrid()
-    {
-        IGrid grid = this.getGrid();
-
-        if (grid == null)
-        {
-            return null;
-        }
-
-        return (IStorageGrid) grid.getCache(IStorageGrid.class);
-    }
-
-    public final IGrid getGrid()
-    {
-        IGridNode node = this.part.getGridNode();
-
-        if (node != null)
-        {
-            return node.getGrid();
-        }
-
-        return null;
-    }
-
-    public ISecurityGrid getSecurityGrid()
-    {
-        IGrid grid = this.getGrid();
-
-        if (grid == null)
-        {
-            return null;
-        }
-
-        return (ISecurityGrid) grid.getCache(ISecurityGrid.class);
+        return EnumSet.noneOf(ForgeDirection.class);
     }
 
     public IEnergyGrid getEnergyGrid()
@@ -95,17 +59,138 @@ public class AEGridBlock implements IGridBlock
     }
 
     @Override
-    public double getIdlePowerUsage()
-    {
-        return this.part.getPowerUsage();
-    }
-
-    @Override
     public EnumSet<GridFlags> getFlags()
     {
         return EnumSet.of(GridFlags.REQUIRE_CHANNEL);
     }
 
+    public final IGrid getGrid()
+    {
+        // Get the grid node
+        IGridNode node = this.part.getGridNode();
+
+        // Ensure we have a node
+        if (node != null)
+        {
+            // Get the grid
+            return node.getGrid();
+        }
+
+        return null;
+    }
+
+    @Override
+    public AEColor getGridColor()
+    {
+        // Return transparent.
+        return AEColor.Transparent;
+    }
+
+    /**
+     * Gets how much power the part is using.
+     */
+    @Override
+    public double getIdlePowerUsage()
+    {
+        return this.part.getIdlePowerUsage();
+    }
+
+    /**
+     * Gets the AE item monitor for the grid.
+     *
+     * @return Monitor if valid grid, null otherwise.
+     */
+    public IMEMonitor<IAEItemStack> getItemMonitor()
+    {
+        // Get the storage grid
+        IStorageGrid storageGrid = this.getStorageGrid();
+
+        // Do we have a storage grid?
+        if (storageGrid == null)
+        {
+            return null;
+        }
+
+        // Return the storage grid's item monitor.
+        return storageGrid.getItemInventory();
+    }
+
+    /**
+     * Gets the location of the part.
+     */
+    @Override
+    public DimensionalCoord getLocation()
+    {
+        return this.part.getLocation();
+    }
+
+    /**
+     * Gets the part
+     */
+    @Override
+    public IGridHost getMachine()
+    {
+        return this.part;
+    }
+
+    /**
+     * Gets the an itemstack based on the parts state.
+     */
+    @Override
+    public ItemStack getMachineRepresentation()
+    {
+        return this.part.getItemStack(PartItemStack.Network);
+    }
+
+    /**
+     * Gets the security grid
+     *
+     * @return
+     */
+    public ISecurityGrid getSecurityGrid()
+    {
+        // Get the grid.
+        IGrid grid = this.getGrid();
+
+        // Do we have a grid?
+        if (grid == null)
+        {
+            return null;
+        }
+
+        // Get the security grid from the cache.
+        return (ISecurityGrid) grid.getCache(ISecurityGrid.class);
+    }
+
+    /**
+     * Gets the storage grid.
+     *
+     * @return
+     */
+    public IStorageGrid getStorageGrid()
+    {
+        // Get the grid.
+        IGrid grid = this.getGrid();
+
+        // Do we have a grid?
+        if (grid == null)
+        {
+            return null;
+        }
+
+        // Get the storage grid from the cache.
+        return (IStorageGrid) grid.getCache(IStorageGrid.class);
+    }
+
+    @Override
+    public void gridChanged()
+    {
+        // Ignored
+    }
+
+    /**
+     * Parts are not world accessable
+     */
     @Override
     public boolean isWorldAccessible()
     {
@@ -113,49 +198,17 @@ public class AEGridBlock implements IGridBlock
     }
 
     @Override
-    public DimensionalCoord getLocation()
+    public void onGridNotification(final GridNotification notification)
     {
-        return this.part.getLocation();
+        // Ignored
     }
 
+    /**
+     * Called to update the grid and the channels used.
+     */
     @Override
-    public AEColor getGridColor()
-    {
-        return (this.color != null ? this.color : AEColor.Transparent);
-    }
-
-    @Override
-    public void onGridNotification(GridNotification gridNotification)
-    {
-
-    }
-
-    @Override
-    public void setNetworkStatus(IGrid iGrid, int i)
+    public final void setNetworkStatus(final IGrid grid, final int usedChannels)
     {
     }
 
-    @Override
-    public EnumSet<ForgeDirection> getConnectableSides()
-    {
-        return EnumSet.noneOf(ForgeDirection.class);
-    }
-
-    @Override
-    public IGridHost getMachine()
-    {
-        return this.part;
-    }
-
-    @Override
-    public void gridChanged()
-    {
-
-    }
-
-    @Override
-    public ItemStack getMachineRepresentation()
-    {
-        return this.part.getItemStack(PartItemStack.Network);
-    }
 }
