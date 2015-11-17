@@ -2,6 +2,7 @@ package us.drullk.shizzel.networking.appEng;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import us.drullk.shizzel.Shizzel;
@@ -13,12 +14,9 @@ public class ChannelHandler
     public static void registerMessages()
     {
         byte discriminator = 0;
-    }
 
-    public static void sendPacketToAllAround(AbstractPacket packet, int dimension, double x, double y, double z, int range)
-    {
-        NetworkRegistry.TargetPoint p = new NetworkRegistry.TargetPoint(dimension, x, y, z, range);
-        wrapper.sendToAllAround(packet, p);
+        wrapper.registerMessage( HandlerChiselingTerminalClient.class, PacketChiselingTerminalClient.class, discriminator++ , Side.CLIENT );
+        wrapper.registerMessage( HandlerChiselingTerminalServer.class, PacketChiselingTerminalServer.class, discriminator++ , Side.SERVER );
     }
 
     public static void sendPacketToPlayer(final AbstractPacket packet, final EntityPlayer player)

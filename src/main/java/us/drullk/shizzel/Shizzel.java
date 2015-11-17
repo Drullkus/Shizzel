@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import us.drullk.shizzel.appEng.AppEngHandler;
 import us.drullk.shizzel.forestry.Forestry;
+import us.drullk.shizzel.networking.appEng.ChannelHandler;
 import us.drullk.shizzel.proxy.CommonProxy;
 import us.drullk.shizzel.utils.ShizzelGUIHandler;
 
@@ -78,6 +79,8 @@ public class Shizzel
     public void init(FMLInitializationEvent event)
     {
         proxy.init();
+
+        ChannelHandler.registerMessages();
 
         if (Loader.isModLoaded("Forestry"))
         {

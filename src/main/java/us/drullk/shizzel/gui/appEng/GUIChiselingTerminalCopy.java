@@ -23,6 +23,7 @@ import us.drullk.shizzel.container.appEng.ContainerChiselingTerminal;
 import us.drullk.shizzel.gui.appEng.elements.*;
 import us.drullk.shizzel.gui.appEng.widget.WidgetAEItem;
 import us.drullk.shizzel.networking.appEng.PacketChiselingTerminalServer;
+import us.drullk.shizzel.utils.GuiHelper;
 import us.drullk.shizzel.utils.Helper;
 
 import java.util.ArrayList;
@@ -270,7 +271,7 @@ public class GUIChiselingTerminalCopy extends AbstractGUIBase implements ISortSo
 
     private boolean clickHandler_Widgets(final int mouseX, final int mouseY, final int mouseButton)
     {
-        if (Helper.isPointInGuiRegion(ME_ITEM_POS_Y, ME_ITEM_POS_X, this.widgetRows * GUI_MIDDLE_HEIGHT, ME_GRID_WIDTH, mouseX, mouseY, this.guiLeft, this.guiTop))
+        if (GuiHelper.INSTANCE.isPointInGuiRegion(ME_ITEM_POS_Y, ME_ITEM_POS_X, this.widgetRows * GUI_MIDDLE_HEIGHT, ME_GRID_WIDTH, mouseX, mouseY, this.guiLeft, this.guiTop))
         {
             boolean doExtract = (this.entityPlayer.inventory.getItemStack() == null);
 
@@ -350,7 +351,7 @@ public class GUIChiselingTerminalCopy extends AbstractGUIBase implements ISortSo
     {
         // Was the mouse right-clicked over the search field?
         if ((mouseButton == 1) &&
-                Helper.isPointInGuiRegion(SEARCH_POS_Y, SEARCH_POS_X,
+                GuiHelper.INSTANCE.isPointInGuiRegion(SEARCH_POS_Y, SEARCH_POS_X,
                         SEARCH_HEIGHT, SEARCH_WIDTH, mouseX, mouseY, this.guiLeft, this.guiTop))
         {
             // Clear the search field
@@ -561,7 +562,7 @@ public class GUIChiselingTerminalCopy extends AbstractGUIBase implements ISortSo
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    private void setupTerminalStyle()
+    /*private void setupTerminalStyle()
     {
         int extraRows = 0;
 
@@ -633,5 +634,5 @@ public class GUIChiselingTerminalCopy extends AbstractGUIBase implements ISortSo
 
         // Clear any tooltip
         this.tooltip.clear();
-    }
+    }*/
 }

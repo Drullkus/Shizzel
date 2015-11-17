@@ -35,6 +35,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.appEng.enumList.AEParts;
+import us.drullk.shizzel.appEng.enumList.EnumCache;
 import us.drullk.shizzel.container.appEng.ContainerChiselingTerminal;
 import us.drullk.shizzel.gui.appEng.GUIChiselingTerminal;
 import us.drullk.shizzel.utils.EnumBlockTextures;
@@ -43,28 +44,22 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 {
     private static int invSize = 1;
 
+    public static int VIEW_SLOT_MIN = 11, VIEW_SLOT_MAX = 15;
+
     private static String NBTTagInv = "ShizzelAEInv";
-
     private static String NBTTagSlot = "Slot#";
-
     private static String NBTTagSortOrder = "SortOrder";
-
     private static String NBTTagSortDirection = "SortDirection";
-
     private static String NBTTagViewMode = "ViewMode";
 
     private static double powerDrain = 0.5D;
 
     private static SortOrder defSortOrder = SortOrder.NAME;
-
     private static SortDir defSortDirection = SortDir.ASCENDING;
-
     private static ViewItems defViewItems = ViewItems.ALL;
 
     private SortOrder sortOrder = PartChiselingTerminal.defSortOrder;
-
     private SortDir sortDirection = PartChiselingTerminal.defSortDirection;
-
     private ViewItems viewMode = PartChiselingTerminal.defViewItems;
 
     private ItemStack[] slots = new ItemStack[PartChiselingTerminal.invSize];
@@ -194,7 +189,6 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     @Override
     public TickRateModulation tickingRequest(IGridNode iGridNode, int ticksSinceLastRequest)
     {
-        //TODO: Find out what this is.
         //Looks like it is a call to the Part's functions. Possibly important
         return TickRateModulation.IDLE;
     }
@@ -279,6 +273,15 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     private void notifyListeners(int slotRequest)
     {
         //TODO: Listener stuff
+
+        for( ContainerChiselingTerminal listener : this.listeners )
+        {
+            // Ensure the listener is still there
+            if( listener != null )
+            {
+                listener.onViewCellChange();
+            }
+        }
     }
 
     @Override
@@ -376,7 +379,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
             return;
         }
 
-        // TODO: Needs more things
+        // TODO: Do Drops
     }
 
     @Override
@@ -461,29 +464,26 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
                 {
                     ItemStack stackFromSlot = ItemStack.loadItemStackFromNBT(NBTCompound);
 
-                    //TODO: Do more things here
+                    //TODO: Do more things here for Chiseling
 
                     this.slots[slot] = stackFromSlot;
                 }
             }
         }
 
-        // Modes (Buttons on the left side of the ME Access Terminal)
-        // TODO: Do more things in these following three if-chunks
-
         if (NBTData.hasKey(PartChiselingTerminal.NBTTagSortOrder))
         {
-
+            this.sortOrder = EnumCache.AE_SORT_ORDERS[NBTData.getInteger( PartChiselingTerminal.NBTTagSortOrder )];
         }
 
         if (NBTData.hasKey(PartChiselingTerminal.NBTTagSortDirection))
         {
-
+            this.sortDirection = EnumCache.AE_SORT_DIRECTIONS[NBTData.getInteger( PartChiselingTerminal.NBTTagSortDirection )];
         }
 
         if (NBTData.hasKey(PartChiselingTerminal.NBTTagViewMode))
         {
-
+            this.viewMode = EnumCache.AE_VIEW_ITEMS[NBTData.getInteger( PartChiselingTerminal.NBTTagViewMode )];
         }
     }
 

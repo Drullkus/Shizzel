@@ -32,8 +32,8 @@ import us.drullk.shizzel.gui.appEng.elements.*;
 import us.drullk.shizzel.gui.appEng.widget.AbstractWidget;
 import us.drullk.shizzel.gui.appEng.widget.WidgetAEItem;
 import us.drullk.shizzel.networking.appEng.PacketChiselingTerminalServer;
-import us.drullk.shizzel.utils.EnumBlockTextures;
 import us.drullk.shizzel.utils.GuiHelper;
+import us.drullk.shizzel.utils.MEWidgetSlot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
     protected static final int BUTTON_AE_SIZE = 16;
     protected static final int BUTTON_TINY_SIZE = 8;
     protected static final int GUI_WIDTH = 230;
-    protected static final int GUI_HEIGHT = 243;
+    protected static final int GUI_HEIGHT = 168;
     protected static final int GUI_VIEW_CELL_TEXTURE_WIDTH = 35;
     protected static final int GUI_VIEW_CELL_TEXTURE_HEIGHT = 104;
     protected static final int GUI_UPPER_TEXTURE_HEIGHT = 35;
@@ -59,7 +59,7 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
     protected static final int GUI_MAIN_BODY_WIDTH = GUI_WIDTH - GUI_VIEW_CELL_TEXTURE_WIDTH;
     protected static final int ME_DEFAULT_ROWS = 3;
     protected static final int ME_COLUMNS = 9;
-    protected static final int ME_ITEM_POS_X = 7;
+    protected static final int ME_ITEM_POS_X = 8;
     protected static final int ME_ITEM_POS_Y = 17;
     protected static final int ME_GRID_WIDTH = 161;
     protected static final int ME_ROW_HEIGHT = 18;
@@ -67,14 +67,15 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
     protected static final int SCROLLBAR_POS_X = 175;
     protected static final int SCROLLBAR_POS_Y = 18;
     protected static final int SCROLLBAR_HEIGHT = 52;
-    protected static final int SEARCH_POS_X = 98;
+    protected static final int SEARCH_POS_X = 82;
     protected static final int SEARCH_POS_Y = 6;
-    protected static final int SEARCH_WIDTH = 65;
+    protected static final int SEARCH_WIDTH = 86;
     protected static final int SEARCH_HEIGHT = 10;
     protected static final int SEARCH_MAX_CHARS = 15;
     protected static final int TITLE_POS_X = 8;
     protected static final int TITLE_POS_Y = 6;
     protected static final long WIDGET_TOOLTIP_UPDATE_INTERVAL = 3000L;
+    private MEWidgetSlot widgetSlot;
     private AppEngRenderItem aeItemRenderer = new AppEngRenderItem();
     private String guiTitle;
     private int widgetCount = ME_DEFAULT_ROWS * ME_COLUMNS;
@@ -122,13 +123,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
 
     }
 
-    /**
-     * Checks if the click was a region deposit.
-     *
-     * @param mouseX
-     * @param mouseY
-     * @return True if click was handled.
-     */
     private boolean clickHandler_RegionDeposit( final int mouseX, final int mouseY )
     {
         // Is the player holding the space key?
@@ -151,14 +145,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         return false;
     }
 
-    /**
-     * Checks if the click was inside the search box.
-     *
-     * @param mouseX
-     * @param mouseY
-     * @param mouseButton
-     * @return True if click was handled.
-     */
     private boolean clickHandler_SearchBox( final int mouseX, final int mouseY, final int mouseButton )
     {
         // Was the mouse right-clicked over the search field?
@@ -185,14 +171,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         return false;
     }
 
-    /**
-     * Checks if the click was inside the widgets.
-     *
-     * @param mouseX
-     * @param mouseY
-     * @param mouseButton
-     * @return True if click was handled.
-     */
     private boolean clickHandler_Widgets( final int mouseX, final int mouseY, final int mouseButton )
     {
         // Was the click inside the ME grid?
@@ -225,12 +203,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         return false;
     }
 
-    /**
-     * Extracts or inserts an item to/from the player held stack based on the
-     * direction the mouse wheel was scrolled.
-     *
-     * @param deltaZ
-     */
     private void doMEWheelAction( final int deltaZ )
     {
         // Get the mouse position
@@ -261,13 +233,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         }
     }
 
-    /**
-     * Draws the AE item widgets.
-     *
-     * @param mouseX
-     * @param mouseY
-     * @return
-     */
     private WidgetAEItem drawItemWidgets( final int mouseX, final int mouseY )
     {
         boolean hasNoOverlay = true;
@@ -300,14 +265,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         return widgetUnderMouse;
     }
 
-    /**
-     * If the user has clicked on an item widget this will inform the server
-     * so that the item can be extracted from the AE network.
-     *
-     * @param mouseX
-     * @param mouseY
-     * @param mouseButton
-     */
     private void sendItemWidgetClicked( final int mouseX, final int mouseY, final int mouseButton )
     {
         for( int index = 0; index < this.widgetCount; ++index )
@@ -329,7 +286,7 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
                     {
                         if( widgetStack.isCraftable() )
                         {
-                            // TODO: Get with the AE2 team to see if I can get this working.
+                            // TODOGet with the AE2 team to see if I can get this working.
                             //new PacketServerArcaneCraftingTerminal().createRequestAutoCraft( this.player, widgetStack ).sendPacketToServer();
                         }
                     }
@@ -389,6 +346,12 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
 
                 // Create the ME slot
                 this.itemWidgets.add( new WidgetAEItem( this, posX, posY, this.aeItemRenderer ) );
+
+                // Horrible hack
+                if( this.widgetSlot != null )
+                {
+                    this.widgetSlot.addSlot( index, posX, posY );
+                }
             }
         }
 
@@ -427,7 +390,7 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
             // Did we get a stack?
             if( stack != null )
             {
-                // TODO: Prevent craftable items from being shown until AE2 team accepts pull request.
+                // TODOPrevent craftable items from being shown until AE2 team accepts pull request.
                 if( stack.getStackSize() == 0 )
                 {
                     index-- ;
@@ -436,18 +399,26 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
 
                 // Set the item
                 this.itemWidgets.get( index ).setItemStack( stack );
+                if( this.widgetSlot != null )
+                {
+                    this.widgetSlot.setSlot( index, stack.getItemStack().copy() );
+                }
             }
             else
             {
                 // Set to null
                 this.itemWidgets.get( index ).setItemStack( null );
+                if( this.widgetSlot != null )
+                {
+                    this.widgetSlot.setSlot( index, null );
+                }
             }
         }
     }
 
     private void updateScrollbarRange()
     {
-        // TODO: This needs some work to prevent overscroll
+        // TODOThis needs some work to prevent overscroll
         // Calculate the total number of rows needed to display ALL items
         int totalNumberOfRows = (int)Math.ceil( this.repo.size() / (double)ME_COLUMNS );
 
@@ -464,10 +435,10 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
     private void updateSorting()
     {
         // Set the direction icon
-        this.btnSortingDirection.setSortingDirection( this.sortingDirection );
+        this.btnSortingDirection.setSortingDirection(this.sortingDirection );
 
         // Set the order icon
-        this.btnSortingMode.setSortMode( this.sortingOrder );
+        this.btnSortingMode.setSortMode(this.sortingOrder );
 
         // Set the view mode
         this.btnViewType.setViewMode( this.viewMode );
@@ -508,7 +479,7 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         }
 
         // Full white
-        GL11.glColor4f( 1.0F, 1.0F, 1.0F, 1.0F );
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Set the texture
         this.mc.renderEngine.bindTexture(new ResourceLocation(Shizzel.MOD_ID,"textures/gui/chisel_terminal.png"));
@@ -528,7 +499,7 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         }
 
         // Draw the lower portion, bottom two rows, crafting grid, player inventory
-        this.drawTexturedModalRect( this.guiLeft, this.guiTop + GUI_UPPER_TEXTURE_HEIGHT + this.lowerTerminalYOffset, 0,
+        this.drawTexturedModalRect(this.guiLeft, this.guiTop + GUI_UPPER_TEXTURE_HEIGHT + this.lowerTerminalYOffset, 0,
                 ME_ROW_HEIGHT + 17, GUI_MAIN_BODY_WIDTH,
                 GUI_TEXTURE_LOWER_HEIGHT + 18 );
 
@@ -859,48 +830,31 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         this.lastTooltipUpdateTime = 0;
     }
 
-    /**
-     * Draws all screen elements, specifically calling on TC to draw the aspects
-     * of whatever the mouse is over.
-     */
     @Override
     public void drawScreen( final int mouseX, final int mouseY, final float mouseBtn )
     {
         // Call super
         super.drawScreen( mouseX, mouseY, mouseBtn );
-
     }
 
-    /**
-     * Gets the sorting order.
-     */
     @Override
     public Enum getSortBy()
     {
         return this.sortingOrder;
     }
 
-    /**
-     * Gets the sorting direction.
-     */
     @Override
     public Enum getSortDir()
     {
         return this.sortingDirection;
     }
 
-    /**
-     * Gets what items (stored vs crafting) to show.
-     */
     @Override
     public Enum getSortDisplay()
     {
         return this.viewMode;
     }
 
-    /**
-     * If the mouse wheel has moved, passes the data to the scrollbar
-     */
     @Override
     public void handleMouseInput()
     {
@@ -938,9 +892,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         super.handleMouseInput();
     }
 
-    /**
-     * Sets the gui up.
-     */
     @Override
     public void initGui()
     {
@@ -1007,16 +958,12 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
                 BUTTON_AE_SIZE, BUTTON_AE_SIZE, this.terminalStyle ) );
 
         // Add the container as a listener
-        ( (ContainerPartArcaneCraftingTerminal)this.inventorySlots ).registerForUpdates();
+        ( (ContainerChiselingTerminal)this.inventorySlots ).registerForUpdates();
 
         // Request a full update from the server
         new PacketChiselingTerminalServer().createRequestFullList( this.player ).sendPacketToServer();
-
     }
 
-    /**
-     * Called when the gui is closing.
-     */
     @Override
     public void onGuiClosed()
     {
@@ -1027,11 +974,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         Keyboard.enableRepeatEvents( false );
     }
 
-    /**
-     * Called to update the amount of an item in the ME network.
-     *
-     * @param change
-     */
     public void onReceiveChange( final IAEItemStack change )
     {
         // Update the repository
@@ -1041,12 +983,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         this.viewNeedsUpdate = true;
     }
 
-    /**
-     * Called when the server sends a full list of all
-     * items in the AE network in response to our request.
-     *
-     * @param itemList
-     */
     public void onReceiveFullList( final IItemList<IAEItemStack> itemList )
     {
         // Update the repository
@@ -1059,11 +995,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         this.viewNeedsUpdate = true;
     }
 
-    /**
-     * Called to update what the player is holding.
-     *
-     * @param heldItemstack
-     */
     public void onReceivePlayerHeld( final IAEItemStack heldItemstack )
     {
         ItemStack itemStack = null;
@@ -1078,12 +1009,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         this.player.inventory.setItemStack( itemStack );
     }
 
-    /**
-     * Called when the server sends the sorting order and direction.
-     *
-     * @param order
-     * @param direction
-     */
     public void onReceiveSorting( final SortOrder order, final SortDir direction, final ViewItems viewMode )
     {
         // Set the direction
@@ -1099,18 +1024,6 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         this.updateSorting();
     }
 
-    /**
-     * Called when the server wants the client to force an update to the aspect
-     * costs.
-     */
-    public void onServerSendForceUpdateCost()
-    {
-        ( (ContainerPartArcaneCraftingTerminal)this.inventorySlots ).getCraftingCost( true );
-    }
-
-    /**
-     * Called when the view cells change.
-     */
     public void onViewCellsChanged( final ItemStack[] viewCells )
     {
         // Update the repo

@@ -5,6 +5,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.Gui;
+import us.drullk.shizzel.utils.GuiHelper;
 import us.drullk.shizzel.utils.Helper;
 
 public abstract class AbstractWidget extends Gui
@@ -45,7 +46,7 @@ public abstract class AbstractWidget extends Gui
 
     public boolean isMouseOverWidget(int mouseX, int mouseY)
     {
-        return Helper.isPointInGuiRegion(this.yPosition, this.xPosition, AbstractWidget.WIDGET_SIZE, AbstractWidget.WIDGET_SIZE, mouseX,
+        return GuiHelper.INSTANCE.isPointInGuiRegion(this.yPosition, this.xPosition, AbstractWidget.WIDGET_SIZE, AbstractWidget.WIDGET_SIZE, mouseX,
                 mouseY, this.hostGUI.guiLeft(), this.hostGUI.guiTop());
     }
 

@@ -71,6 +71,11 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
         this.associatedItem = associatedPart.getStack();
     }
 
+    public final TileEntity getHostTile()
+    {
+        return this.TE;
+    }
+
     @MENetworkEventSubscribe
     public void setPower(MENetworkPowerStatusChange statusChange)
     {
