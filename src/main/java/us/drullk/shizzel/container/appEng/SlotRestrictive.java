@@ -6,18 +6,18 @@ import net.minecraft.item.ItemStack;
 
 public class SlotRestrictive extends Slot
 {
-    private int index;
+    private int itemIndex;
 
-    public SlotRestrictive(IInventory p_i1824_1_, int p_i1824_2_, int p_i1824_3_, int p_i1824_4_)
+    public SlotRestrictive(IInventory inventory, int index, int x, int y)
     {
-        super(p_i1824_1_, p_i1824_2_, p_i1824_3_, p_i1824_4_);
+        super(inventory, index, x, y);
 
-        this.index = p_i1824_2_;
+        this.itemIndex = index;
     }
 
     @Override
     public boolean isItemValid(final ItemStack itemstack)
     {
-        return this.inventory.isItemValidForSlot(this.index, itemstack);
+        return this.inventory.isItemValidForSlot(this.itemIndex, itemstack);
     }
 }

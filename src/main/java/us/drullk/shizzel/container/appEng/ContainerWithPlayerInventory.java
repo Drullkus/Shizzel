@@ -22,46 +22,60 @@ public abstract class ContainerWithPlayerInventory extends Container
 
     private int firstHotbarSlotNumber = -1, lastHotbarSlotNumber = -1;
 
-    public void bindPlayerInventory(IInventory playerInv, int invPlayerOffsetY, int invHotbarOffsetY)
+    public final void bindPlayerInventory( final IInventory playerInventory, final int inventoryOffsetY, final int hotbarPositionY )
     {
+
+        // Hot-bar ID's 0-8
         Slot hotbarSlot = null;
-
-        for (int c = 0; c < ContainerWithPlayerInventory.columns; c++)
+        for( int column = 0; column < ContainerWithPlayerInventory.columns; column++ )
         {
-            hotbarSlot = new Slot(playerInv, c, ContainerWithPlayerInventory.renderXOffset +
-                    (c * ContainerWithPlayerInventory.renderSlotSize), invHotbarOffsetY);
+            // Create the slot
+            hotbarSlot = new Slot( playerInventory, column, ContainerWithPlayerInventory.renderXOffset +
+                    ( column * ContainerWithPlayerInventory.renderSlotSize ), hotbarPositionY );
 
-            this.addSlotToContainer(hotbarSlot);
+            // Add the slot
+            this.addSlotToContainer( hotbarSlot );
 
-            if (c == 0)
+            // Check first
+            if( column == 0 )
             {
+                this.firstHotbarSlotNumber = hotbarSlot.slotNumber;
             }
         }
 
-        if (hotbarSlot != null)
+        // Set last
+        if( hotbarSlot != null )
         {
+            this.lastHotbarSlotNumber = hotbarSlot.slotNumber;
         }
 
+        // Main inventory ID's 9-36
         Slot inventorySlot = null;
-        for (int r = 0; r < ContainerWithPlayerInventory.rows; r++)
+        for( int row = 0; row < ContainerWithPlayerInventory.rows; row++ )
         {
-            for (int c = 0; c < ContainerWithPlayerInventory.columns; c++)
+            for( int column = 0; column < ContainerWithPlayerInventory.columns; column++ )
             {
-                inventorySlot = new Slot(playerInv,
-                        ContainerWithPlayerInventory.columns + (c + (r * ContainerWithPlayerInventory.columns)),
-                        ContainerWithPlayerInventory.renderXOffset + (c * ContainerWithPlayerInventory.renderSlotSize),
-                        (r * ContainerWithPlayerInventory.renderSlotSize) + invPlayerOffsetY);
+                // Create the slot
+                inventorySlot = new Slot( playerInventory, ContainerWithPlayerInventory.columns +
+                        ( column + ( row * ContainerWithPlayerInventory.columns ) ), ContainerWithPlayerInventory.renderXOffset +
+                        ( column * ContainerWithPlayerInventory.renderSlotSize ), ( row * ContainerWithPlayerInventory.renderSlotSize ) +
+                        inventoryOffsetY );
 
-                this.addSlotToContainer(inventorySlot);
+                // Add the slot
+                this.addSlotToContainer( inventorySlot );
 
-                if ((r + c) == 0)
+                // Check first
+                if( ( row + column ) == 0 )
                 {
+                    this.firstPlayerSlotNumber = inventorySlot.slotNumber;
                 }
             }
         }
 
-        if (inventorySlot != null)
+        // Set last
+        if( inventorySlot != null )
         {
+            this.lastPlayerSlotNumber = inventorySlot.slotNumber;
         }
     }
 
