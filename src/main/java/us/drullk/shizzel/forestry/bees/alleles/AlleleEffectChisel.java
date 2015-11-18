@@ -18,6 +18,7 @@ import team.chisel.api.carving.ICarvingVariation;
 import team.chisel.carving.Carving;
 import team.chisel.utils.General;
 import us.drullk.shizzel.forestry.bees.BeeManager;
+import us.drullk.shizzel.utils.Helper;
 
 public class AlleleEffectChisel extends AlleleEffect
 {
@@ -62,41 +63,11 @@ public class AlleleEffectChisel extends AlleleEffect
 
         if ((block != null) && (block != Blocks.air) && (block != Blocks.wooden_door) && (Item.getItemFromBlock(block) != null))
         {
-            //Shizzel.logger.info("DEBUG - " + block.getUnlocalizedName());
+            ItemStack blockStack = new ItemStack(block, 1, metadata);
 
-            if (Carving.chisel.getGroup(block, metadata) != null)
-            {
-                ICarvingGroup group = Carving.chisel.getGroup(block, metadata);
+            blockStack = Helper.getNextStackInCarvingGroup(blockStack);
 
-                List<ICarvingVariation> list = group.getVariations();
-
-                main:
-                for (ItemStack stack : OreDictionary.getOres(group.getOreName()))
-                {
-                    ICarvingVariation v = General.getVariation(stack);
-                    for (ICarvingVariation check : list)
-                    {
-                        if (check.getBlock() == v.getBlock() && check.getBlockMeta() == v.getBlockMeta())
-                        {
-                            continue main;
-                        }
-                    }
-                    list.add(General.getVariation(stack));
-                }
-
-                ICarvingVariation[] variations = list.toArray(new ICarvingVariation[] {});
-
-                for (int i = 0; i < variations.length; i++)
-                {
-                    ICarvingVariation v = variations[i];
-
-                    if (v.getBlock() == block && v.getBlockMeta() == metadata)
-                    {
-                        //Shizzel.logger.info("DEBUG - " + block.getUnlocalizedName());
-                        world.setBlock(xCoord, yCoord, zCoord, variations[i + 1 < variations.length ? i + 1 : 0].getBlock(), variations[i + 1 < variations.length ? i + 1 : 0].getBlockMeta(), 3);
-                    }
-                }
-            }
+            world.setBlock(xCoord, yCoord, zCoord, Block.getBlockFromItem(blockStack.getItem()),blockStack.getItemDamage(), 3);
         }
         storedData.setInteger(0, 0);
 
