@@ -14,6 +14,7 @@ import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.parts.IPartCollisionHelper;
 import appeng.api.parts.IPartRenderHelper;
+import appeng.api.parts.PartItemStack;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEFluidStack;
@@ -45,25 +46,36 @@ import us.drullk.shizzel.utils.Helper;
 
 public class PartChiselingTerminal extends AEPartAbstractRotateable implements IInventory, IGridTickable, ITerminalHost
 {
-    private static int invSize = 6;
-    public static int VIEW_SLOT_MIN = 11, VIEW_SLOT_MAX = 15;
-    public static int chiselFilter = 0;
-    private static String NBTTagInv = "ShizzelAEInv";
-    private static String NBTTagSlot = "Slot#";
-    private static String NBTTagSortOrder = "SortOrder";
-    private static String NBTTagSortDirection = "SortDirection";
-    private static String NBTTagViewMode = "ViewMode";
+    private static int MY_INVENTORY_SIZE = 6;
+
+    public static int CHISEL_FILTER_SLOT_INDEX = 0, VIEW_SLOT_MIN = 1, VIEW_SLOT_MAX = 5;
+
+    private static String INVENTORY_NBT_KEY = "Shizel_Inventory";
+
+    private static String SLOT_NBT_KEY = "Slot#";
+
+    private static String SORT_ORDER_NBT_KEY = "SortOrder";
+
+    private static String SORT_DIRECTION_NBT_KEY = "SortDirection";
+
+    private static String VIEW_MODE_NBT_KEY = "ViewMode";
+
     private static double powerDrain = 0.5D;
 
-    private static SortOrder defSortOrder = SortOrder.NAME;
-    private static SortDir defSortDirection = SortDir.ASCENDING;
-    private static ViewItems defViewItems = ViewItems.ALL;
+    private static SortOrder DEFAULT_SORT_ORDER = SortOrder.NAME;
 
-    private SortOrder sortOrder = PartChiselingTerminal.defSortOrder;
-    private SortDir sortDirection = PartChiselingTerminal.defSortDirection;
-    private ViewItems viewMode = PartChiselingTerminal.defViewItems;
+    private static SortDir DEFAULT_SORT_DIR = SortDir.ASCENDING;
 
-    private ItemStack[] slots = new ItemStack[PartChiselingTerminal.invSize];
+    private static ViewItems DEFAULT_VIEW_MODE = ViewItems.ALL;
+
+    private SortOrder sortingOrder = PartChiselingTerminal.DEFAULT_SORT_ORDER;
+
+    private SortDir sortingDirection = PartChiselingTerminal.DEFAULT_SORT_DIR;
+
+    private ViewItems viewMode = PartChiselingTerminal.DEFAULT_VIEW_MODE;
+
+    private ItemStack[] slots = new ItemStack[PartChiselingTerminal.MY_INVENTORY_SIZE];
+
     private List<ContainerChiselingTerminal> listeners = new ArrayList<ContainerChiselingTerminal>();
 
     public PartChiselingTerminal()
@@ -73,7 +85,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     private boolean isSlotSafe(final int slotRequest)
     {
-        return ((slotRequest >= 0) && (slotRequest < PartChiselingTerminal.invSize));
+        return ((slotRequest >= 0) && (slotRequest < PartChiselingTerminal.MY_INVENTORY_SIZE));
     }
 
     @Override
@@ -196,7 +208,7 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     @Override
     public int getSizeInventory()
     {
-        return PartChiselingTerminal.invSize;
+        return PartChiselingTerminal.MY_INVENTORY_SIZE;
     }
 
     @Override
@@ -334,15 +346,15 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
                 return true;
             }
 
-            if((slotRequest == PartChiselingTerminal.chiselFilter))
+            if ((slotRequest == PartChiselingTerminal.CHISEL_FILTER_SLOT_INDEX))
             {
                 return Helper.isBlockChiselable(Carving.chisel.getGroup(is));
             }
 
-            if( ( slotRequest >= PartChiselingTerminal.VIEW_SLOT_MIN ) && ( slotRequest <= PartChiselingTerminal.VIEW_SLOT_MAX ) )
+            if ((slotRequest >= PartChiselingTerminal.VIEW_SLOT_MIN) && (slotRequest <= PartChiselingTerminal.VIEW_SLOT_MAX))
             {
                 // Is the stack a view slot?
-                return( is.getItem() instanceof ItemViewCell );
+                return (is.getItem() instanceof ItemViewCell);
 
             }
 
@@ -387,13 +399,13 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
             return;
         }
 
-        for( int slotIndex = 0; slotIndex < PartChiselingTerminal.invSize; slotIndex++ )
+        for (int slotIndex = 0; slotIndex < PartChiselingTerminal.MY_INVENTORY_SIZE; slotIndex++)
         {
             ItemStack slotStack = this.slots[slotIndex];
 
-            if( slotStack != null )
+            if (slotStack != null)
             {
-                drops.add( slotStack );
+                drops.add(slotStack);
             }
         }
     }
@@ -424,12 +436,12 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     public SortDir getSortingDirection()
     {
-        return this.sortDirection;
+        return this.sortingDirection;
     }
 
     public SortOrder getSortOrder()
     {
-        return this.sortOrder;
+        return this.sortingOrder;
     }
 
     public ViewItems getViewMode()
@@ -462,44 +474,55 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound NBTData)
+    public void readFromNBT(NBTTagCompound data)
     {
-        super.readFromNBT(NBTData);
+        super.readFromNBT(data);
 
-        if (NBTData.hasKey(PartChiselingTerminal.NBTTagInv))
+        if (data.hasKey(PartChiselingTerminal.INVENTORY_NBT_KEY))
         {
-            NBTTagList NBTList = (NBTTagList) NBTData.getTag(PartChiselingTerminal.NBTTagInv);
+            NBTTagList nbtTagList = (NBTTagList) data.getTag(PartChiselingTerminal.INVENTORY_NBT_KEY);
 
-            for (int i = 0; i < NBTList.tagCount(); i++)
+            for (int listIndex = 0; listIndex < nbtTagList.tagCount(); listIndex++)
             {
-                NBTTagCompound NBTCompound = NBTList.getCompoundTagAt(i);
+                NBTTagCompound nbtCompound = nbtTagList.getCompoundTagAt(listIndex);
 
-                int slot = NBTCompound.getByte(PartChiselingTerminal.NBTTagSlot);
+                int slotIndex = nbtCompound.getByte(PartChiselingTerminal.SLOT_NBT_KEY);
 
-                if (this.isSlotSafe(slot))
+                if (this.isSlotSafe(slotIndex))
                 {
-                    ItemStack stackFromSlot = ItemStack.loadItemStackFromNBT(NBTCompound);
+                    ItemStack slotStack = ItemStack.loadItemStackFromNBT(nbtCompound);
 
-                    //TODO: Do more things here for Chiseling
+                    // Is the slot the chisel slot slot?
+                    if (slotIndex == PartChiselingTerminal.CHISEL_FILTER_SLOT_INDEX)
+                    {
+                        // Validate the block
+                        System.out.println(slotStack);
+                        if (!Helper.isBlockChiselable(Carving.chisel.getGroup(slotStack)))
+                        {
+                            // Invalid block data
+                            slotStack = null;
+                        }
+                    }
+                    System.out.println(slotStack);
 
-                    this.slots[slot] = stackFromSlot;
+                    this.slots[slotIndex] = slotStack;
                 }
             }
         }
 
-        if (NBTData.hasKey(PartChiselingTerminal.NBTTagSortOrder))
+        if (data.hasKey(PartChiselingTerminal.SORT_ORDER_NBT_KEY))
         {
-            this.sortOrder = EnumCache.AE_SORT_ORDERS[NBTData.getInteger(PartChiselingTerminal.NBTTagSortOrder)];
+            this.sortingOrder = EnumCache.AE_SORT_ORDERS[data.getInteger(PartChiselingTerminal.SORT_ORDER_NBT_KEY)];
         }
 
-        if (NBTData.hasKey(PartChiselingTerminal.NBTTagSortDirection))
+        if (data.hasKey(PartChiselingTerminal.SORT_DIRECTION_NBT_KEY))
         {
-            this.sortDirection = EnumCache.AE_SORT_DIRECTIONS[NBTData.getInteger(PartChiselingTerminal.NBTTagSortDirection)];
+            this.sortingDirection = EnumCache.AE_SORT_DIRECTIONS[data.getInteger(PartChiselingTerminal.SORT_DIRECTION_NBT_KEY)];
         }
 
-        if (NBTData.hasKey(PartChiselingTerminal.NBTTagViewMode))
+        if (data.hasKey(PartChiselingTerminal.VIEW_MODE_NBT_KEY))
         {
-            this.viewMode = EnumCache.AE_VIEW_ITEMS[NBTData.getInteger(PartChiselingTerminal.NBTTagViewMode)];
+            this.viewMode = EnumCache.AE_VIEW_ITEMS[data.getInteger(PartChiselingTerminal.VIEW_MODE_NBT_KEY)];
         }
     }
 
@@ -518,9 +541,9 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     public void setSorts(SortOrder sortOrder, SortDir sortDirection, ViewItems viewMode)
     {
-        this.sortOrder = sortOrder;
+        this.sortingOrder = sortOrder;
 
-        this.sortDirection = sortDirection;
+        this.sortingDirection = sortDirection;
 
         this.viewMode = viewMode;
 
@@ -528,44 +551,44 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound NBTData)
+    public void writeToNBT(final NBTTagCompound data, final PartItemStack saveType)
     {
-        super.writeToNBT(NBTData);
+        super.writeToNBT(data, saveType);
 
-        NBTTagList tagList = new NBTTagList();
+        NBTTagList nbtList = new NBTTagList();
 
-        for (int i = 0; i < PartChiselingTerminal.invSize; i++)
+        for (int slotId = 0; slotId < PartChiselingTerminal.MY_INVENTORY_SIZE; slotId++)
         {
-            if (this.slots[i] != null)
+            if (this.slots[slotId] != null)
             {
-                NBTTagCompound tagCompound = new NBTTagCompound();
+                NBTTagCompound nbtCompound = new NBTTagCompound();
 
-                tagCompound.setByte(PartChiselingTerminal.NBTTagSlot, (byte) i);
+                nbtCompound.setByte(PartChiselingTerminal.SLOT_NBT_KEY, (byte) slotId);
 
-                this.slots[i].writeToNBT(NBTData);
+                this.slots[slotId].writeToNBT(nbtCompound);
 
-                tagList.appendTag(tagCompound);
+                nbtList.appendTag(nbtCompound);
             }
         }
 
-        if (tagList.tagCount() > 0)
+        if (nbtList.tagCount() > 0)
         {
-            NBTData.setTag(PartChiselingTerminal.NBTTagInv, tagList);
+            data.setTag(PartChiselingTerminal.INVENTORY_NBT_KEY, nbtList);
         }
 
-        if (this.sortDirection != PartChiselingTerminal.defSortDirection)
+        if (this.sortingDirection != PartChiselingTerminal.DEFAULT_SORT_DIR)
         {
-            NBTData.setInteger(PartChiselingTerminal.NBTTagSortDirection, this.sortDirection.ordinal());
+            data.setInteger(PartChiselingTerminal.SORT_DIRECTION_NBT_KEY, this.sortingDirection.ordinal());
         }
 
-        if (this.sortOrder != PartChiselingTerminal.defSortOrder)
+        if (this.sortingOrder != PartChiselingTerminal.DEFAULT_SORT_ORDER)
         {
-            NBTData.setInteger(PartChiselingTerminal.NBTTagSortOrder, this.sortOrder.ordinal());
+            data.setInteger(PartChiselingTerminal.SORT_ORDER_NBT_KEY, this.sortingOrder.ordinal());
         }
 
-        if (this.viewMode != PartChiselingTerminal.defViewItems)
+        if (this.viewMode != PartChiselingTerminal.DEFAULT_VIEW_MODE)
         {
-            NBTData.setInteger(PartChiselingTerminal.NBTTagViewMode, this.viewMode.ordinal());
+            data.setInteger(PartChiselingTerminal.VIEW_MODE_NBT_KEY, this.viewMode.ordinal());
         }
     }
 }

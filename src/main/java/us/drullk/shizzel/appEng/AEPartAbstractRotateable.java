@@ -2,6 +2,7 @@ package us.drullk.shizzel.appEng;
 
 import java.io.IOException;
 
+import appeng.api.parts.PartItemStack;
 import appeng.util.Platform;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -14,6 +15,8 @@ import us.drullk.shizzel.utils.Helper;
 
 public abstract class AEPartAbstractRotateable extends AEPartAbstract
 {
+    private static final String NBT_KEY_ROT_DIR = "partRotation";
+
     private byte renderRotation = 0;
 
     public AEPartAbstractRotateable(AEParts associatedPart)
@@ -71,9 +74,9 @@ public abstract class AEPartAbstractRotateable extends AEPartAbstract
     {
         super.readFromNBT(data);
 
-        if (data.hasKey("partRotation"))
+        if (data.hasKey(AEPartAbstractRotateable.NBT_KEY_ROT_DIR))
         {
-            this.renderRotation = data.getByte("partRotation");
+            this.renderRotation = data.getByte(AEPartAbstractRotateable.NBT_KEY_ROT_DIR);
         }
     }
 
@@ -82,13 +85,10 @@ public abstract class AEPartAbstractRotateable extends AEPartAbstract
     {
         boolean redraw = false;
 
-        // Call super
         redraw |= super.readFromStream(stream);
 
-        // Read the rotation
         byte streamRot = stream.readByte();
 
-        // Did the rotaion change?
         if (this.renderRotation != streamRot)
         {
             this.renderRotation = streamRot;
@@ -99,13 +99,13 @@ public abstract class AEPartAbstractRotateable extends AEPartAbstract
     }
 
     @Override
-    public void writeToNBT(final NBTTagCompound data)
+    public void writeToNBT(final NBTTagCompound data, final PartItemStack saveType)
     {
-        super.writeToNBT(data);
+        super.writeToNBT(data, saveType);
 
         if (this.renderRotation != 0)
         {
-            data.setByte("partRotation", this.renderRotation);
+            data.setByte(AEPartAbstractRotateable.NBT_KEY_ROT_DIR, this.renderRotation);
         }
     }
 

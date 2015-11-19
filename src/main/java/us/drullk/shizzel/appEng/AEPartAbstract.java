@@ -45,6 +45,7 @@ import us.drullk.shizzel.utils.ShizzelGUIHandler;
 
 public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
 {
+    private final static String NBT_KEY_OWNER = "Owner";
 
     protected IGridNode node;
 
@@ -80,12 +81,39 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
     }
 
     @MENetworkEventSubscribe
-    public void setPower(MENetworkPowerStatusChange statusChange)
+    public final void setPower(final MENetworkPowerStatusChange event)
     {
+        this.updateStatus();
+
+        this.host.markForUpdate();
+    }
+
+    private void updateStatus()
+    {
+        // Ignored client side
+        if (Helper.isClientSide())
+        {
+            return;
+        }
+
+        // Do we have a node?
         if (this.node != null)
         {
-            this.isActive = this.node.isActive();
-            this.host.markForUpdate();
+            // Get the active state
+            boolean currentlyActive = this.node.isActive();
+
+            // Has that state changed?
+            if (currentlyActive != this.isActive)
+            {
+                // Set our active state
+                this.isActive = currentlyActive;
+
+                // Fire the neighbor changed event
+                this.onNeighborChanged();
+
+                // Mark the host for an update
+                this.host.markForUpdate();
+            }
         }
     }
 
@@ -193,19 +221,19 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
     }
 
     @Override
-    public ItemStack getItemStack(PartItemStack partItemStack)
+    public ItemStack getItemStack(final PartItemStack type)
     {
         // Get the itemstack
         ItemStack itemStack = this.associatedItem.copy();
 
         // Save NBT data if the part was wrenched or creatively picked
-        if ((partItemStack == PartItemStack.Wrench) || (partItemStack == PartItemStack.Pick))
+        if ((type == PartItemStack.Wrench) || (type == PartItemStack.Pick))
         {
             // Create the item tag
             NBTTagCompound itemNBT = new NBTTagCompound();
 
             // Write the data
-            this.writeToNBT(itemNBT);
+            this.writeToNBT(itemNBT, PartItemStack.Wrench);
 
             // Set the tag
             if (!itemNBT.hasNoTags())
@@ -253,32 +281,6 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
-    {
-        if (this.node != null)
-        {
-            NBTTagCompound nodeTag = new NBTTagCompound();
-
-            this.node.saveToNBT("node0", nodeTag);
-
-            nbtTagCompound.setTag("node", nodeTag);
-        }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbtTagCompound)
-    {
-        if (nbtTagCompound.hasKey("node") && this.node != null)
-        {
-            this.node.loadFromNBT("node0", nbtTagCompound.getCompoundTag("node"));
-
-            this.ownerID = nbtTagCompound.getInteger("Owner");
-
-            this.node.updateState();
-        }
-    }
-
-    @Override
     public int getLightLevel()
     {
         return this.isActive ? 15 : 0;
@@ -318,20 +320,60 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
     }
 
     @Override
-    public void writeToStream(ByteBuf byteBuf) throws IOException
+    public void readFromNBT(final NBTTagCompound data)
     {
-        byteBuf.writeBoolean(this.node != null && this.node.isActive());
+        // Read the owner
+        if (data.hasKey(AEPartAbstract.NBT_KEY_OWNER))
+        {
+            this.ownerID = data.getInteger(AEPartAbstract.NBT_KEY_OWNER);
+        }
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean readFromStream(ByteBuf byteBuf) throws IOException
+    public boolean readFromStream(final ByteBuf stream) throws IOException
     {
+        // Cache if we were active
         boolean oldActive = this.isActive;
 
-        this.isActive = byteBuf.readBoolean();
+        // Read the new active
+        this.isActive = stream.readBoolean();
 
+        // Redraw if they don't match.
         return (oldActive != this.isActive);
+    }
+
+    /**
+     * General call to WriteNBT, assumes a world save. DO NOT call this from a
+     * subclass's writeToNBT method.
+     */
+    @Override
+    public final void writeToNBT(final NBTTagCompound data)
+    {
+        // Assume world saving.
+        this.writeToNBT(data, PartItemStack.World);
+    }
+
+    /**
+     * Saves NBT data specific to the save type.
+     * 
+     * @param data
+     * @param saveType
+     */
+    public void writeToNBT(final NBTTagCompound data, final PartItemStack saveType)
+    {
+        if (saveType != PartItemStack.Wrench)
+        {
+            // Set the owner ID
+            data.setInteger(AEPartAbstract.NBT_KEY_OWNER, this.ownerID);
+        }
+
+    }
+
+    @Override
+    public void writeToStream(final ByteBuf stream) throws IOException
+    {
+        stream.writeBoolean((this.node != null) && (this.node.isActive()));
     }
 
     @Override
@@ -352,21 +394,22 @@ public abstract class AEPartAbstract implements IPart, IGridHost, IActionHost
     @Override
     public void addToWorld()
     {
+        // Ignored on client side
         if (FMLCommonHandler.instance().getEffectiveSide().isServer())
         {
+            // Create the grid block
             this.gridBlock = new AEGridBlock(this);
 
+            // Create the node
             this.node = AEApi.instance().createGridNode(this.gridBlock);
 
-            if (this.node != null)
-            {
-                this.node.setPlayerID(this.ownerID);
-                this.node.updateState();
-            }
+            // Update state
+            this.node.updateState();
+
+            // Set the player id
+            this.node.setPlayerID(this.ownerID);
 
             this.setPower(null);
-
-            this.onNeighborChanged();
         }
     }
 
