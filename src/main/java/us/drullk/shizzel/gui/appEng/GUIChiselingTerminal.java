@@ -48,100 +48,56 @@ import us.drullk.shizzel.utils.MEWidgetSlot;
 public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         implements ISortSource
 {
-    protected static final int BUTTON_CLEAR_GRID_ID = 0, BUTTON_CLEAR_GRID_POS_X = 98, BUTTON_CLEAR_GRID_POS_Y = 89;
-
     protected static final int BUTTON_SORT_ORDER_ID = 1, BUTTON_SORT_ORDER_POS_X = -18, BUTTON_SORT_ORDER_POS_Y = 8;
-
     protected static final int BUTTON_SORT_DIR_ID = 2, BUTTON_SORT_DIR_POS_X = BUTTON_SORT_ORDER_POS_X, BUTTON_SORT_DIR_POS_Y = BUTTON_SORT_ORDER_POS_Y + 20;
-
     protected static final int BUTTON_VIEW_TYPE_ID = 3, BUTTON_VIEW_TYPE_POS_X = BUTTON_SORT_ORDER_POS_X, BUTTON_VIEW_TYPE_POS_Y = BUTTON_SORT_DIR_POS_Y + 20;
-
     protected static final int BUTTON_SEARCH_MODE_ID = 5, BUTTON_SEARCH_MODE_POS_X = BUTTON_SORT_ORDER_POS_X, BUTTON_SEARCH_MODE_POS_Y = BUTTON_VIEW_TYPE_POS_Y + 20;
-
     protected static final int BUTTON_TERM_STYLE_ID = 6, BUTTON_TERM_STYLE_POS_X = BUTTON_SORT_ORDER_POS_X, BUTTON_TERM_STYLE_POS_Y = BUTTON_SEARCH_MODE_POS_Y + 20;
-
     protected static final int BUTTON_AE_SIZE = 16;
-
-    protected static final int BUTTON_TINY_SIZE = 8;
-
     protected static final int GUI_WIDTH = 230;
-
     protected static final int GUI_HEIGHT = 168;
-
     protected static final int GUI_VIEW_CELL_TEXTURE_WIDTH = 35;
-
     protected static final int GUI_VIEW_CELL_TEXTURE_HEIGHT = 104;
-
     protected static final int GUI_UPPER_TEXTURE_HEIGHT = 35;
-
     protected static final int GUI_TEXTURE_ROW_V = 35;
-
     protected static final int GUI_MAIN_BODY_WIDTH = GUI_WIDTH - GUI_VIEW_CELL_TEXTURE_WIDTH;
-
     protected static final int ME_DEFAULT_ROWS = 3;
-
     protected static final int ME_COLUMNS = 9;
-
     protected static final int ME_ITEM_POS_X = 8;
-
     protected static final int ME_ITEM_POS_Y = 17;
-
     protected static final int ME_GRID_WIDTH = 161;
-
     protected static final int ME_ROW_HEIGHT = 18;
-
     protected static final int GUI_TEXTURE_LOWER_HEIGHT = GUI_HEIGHT - ME_ROW_HEIGHT - GUI_UPPER_TEXTURE_HEIGHT;
-
     protected static final int SCROLLBAR_POS_X = 175;
-
     protected static final int SCROLLBAR_POS_Y = 18;
-
     protected static final int SCROLLBAR_HEIGHT = 52;
-
     protected static final int SEARCH_POS_X = 82;
-
     protected static final int SEARCH_POS_Y = 6;
-
     protected static final int SEARCH_WIDTH = 86;
-
     protected static final int SEARCH_HEIGHT = 10;
-
     protected static final int SEARCH_MAX_CHARS = 15;
-
     protected static final int TITLE_POS_X = 8;
-
     protected static final int TITLE_POS_Y = 6;
-
     protected static final long WIDGET_TOOLTIP_UPDATE_INTERVAL = 3000L;
 
     private MEWidgetSlot widgetSlot;
-
     private AppEngRenderItem aeItemRenderer = new AppEngRenderItem();
-
     private String guiTitle;
 
     private int widgetCount = ME_DEFAULT_ROWS * ME_COLUMNS;
-
     private List<WidgetAEItem> itemWidgets = new ArrayList<WidgetAEItem>();
 
     private EntityPlayer player;
-
     private GuiTextField searchField;
-
     private final ItemRepo repo;
-
     private SortOrder sortingOrder = SortOrder.NAME;
-
     private SortDir sortingDirection = SortDir.ASCENDING;
-
     private ViewItems viewMode = ViewItems.ALL;
 
     private TerminalStyle terminalStyle = TerminalStyle.SMALL;
-
     private int lowerTerminalYOffset = 0;
 
     private int previousMouseX = 0;
-
     private int previousMouseY = 0;
 
     private WidgetAEItem previousWidgetUnderMouse = null;
@@ -151,11 +107,8 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
     private int numberOfWidgetRows = ME_DEFAULT_ROWS;
 
     private GUIButtonSortingMode btnSortingMode;
-
     private GUIButtonSortingDirection btnSortingDirection;
-
     private GUIButtonViewType btnViewType;
-
     private GUIButtonSearchMode btnSearchMode;
 
     private boolean viewNeedsUpdate = true;
@@ -562,6 +515,9 @@ public class GUIChiselingTerminal extends AbstractGuiWithScrollbar
         this.drawTexturedModalRect(this.guiLeft, this.guiTop + GUI_UPPER_TEXTURE_HEIGHT + this.lowerTerminalYOffset, 0,
                 ME_ROW_HEIGHT + 17, GUI_MAIN_BODY_WIDTH,
                 GUI_TEXTURE_LOWER_HEIGHT + 18);
+
+        // Chisel Gadget
+        this.drawTexturedModalRect( this.guiLeft-90, this.guiTop(), 0, 168, 82, 84);
 
         // Draw view cells
         this.drawTexturedModalRect(this.guiLeft + GUI_MAIN_BODY_WIDTH, this.guiTop,

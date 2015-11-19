@@ -34,20 +34,14 @@ import us.drullk.shizzel.utils.Helper;
 public class ContainerChiselingTerminal extends ContainerWithPlayerInventory implements IMEMonitorHandlerReceiver<IAEItemStack>
 {
     public static int VIEW_SLOT_XPOS = 206, VIEW_SLOT_YPOS = 8;
-
-    private static int playerInvPosY = 85;
-
-    private static int hotbarInvPosY = playerInvPosY + (renderSlotSize * 3) + 4;
-
+    private static int playerInvPosY = 86;
+    private static int hotbarInvPosY = playerInvPosY + (renderSlotSize * 3) + 5;
     private int firstViewSlotNumber = -1, lastViewSlotNumber = -1;
-
     private PartChiselingTerminal chiselTerm;
-
     private EntityPlayer entityPlayer;
-
     private IMEMonitor<IAEItemStack> MEMonitor;
-
     private PlayerSource playerSource;
+    private int chiselFilterSlotNumber = -1;
 
     public ContainerChiselingTerminal(PartChiselingTerminal chiselingTerminal, EntityPlayer player)
     {
@@ -57,7 +51,10 @@ public class ContainerChiselingTerminal extends ContainerWithPlayerInventory imp
 
         this.bindPlayerInventory(player.inventory, ContainerChiselingTerminal.playerInvPosY, ContainerChiselingTerminal.hotbarInvPosY);
 
-        //TODO:Setup more chisel stuffs
+        Slot chiselFilteringSlot = new Slot(this.chiselTerm, PartChiselingTerminal.chiselFilter, -66, -120);
+        this.addSlotToContainer(chiselFilteringSlot);
+
+        chiselFilterSlotNumber = chiselFilteringSlot.slotNumber;
 
         SlotRestrictive viewSlot = null;
         for (int viewSlotID = PartChiselingTerminal.VIEW_SLOT_MIN; viewSlotID <= PartChiselingTerminal.VIEW_SLOT_MAX; viewSlotID++)

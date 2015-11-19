@@ -20,6 +20,7 @@ import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.AEColor;
 import appeng.api.util.IConfigManager;
+import appeng.items.storage.ItemViewCell;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -33,45 +34,36 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import team.chisel.carving.Carving;
 import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.appEng.enumList.AEParts;
 import us.drullk.shizzel.appEng.enumList.EnumCache;
 import us.drullk.shizzel.container.appEng.ContainerChiselingTerminal;
 import us.drullk.shizzel.gui.appEng.GUIChiselingTerminal;
 import us.drullk.shizzel.utils.EnumBlockTextures;
+import us.drullk.shizzel.utils.Helper;
 
 public class PartChiselingTerminal extends AEPartAbstractRotateable implements IInventory, IGridTickable, ITerminalHost
 {
-    private static int invSize = 1;
-
+    private static int invSize = 6;
     public static int VIEW_SLOT_MIN = 11, VIEW_SLOT_MAX = 15;
-
+    public static int chiselFilter = 0;
     private static String NBTTagInv = "ShizzelAEInv";
-
     private static String NBTTagSlot = "Slot#";
-
     private static String NBTTagSortOrder = "SortOrder";
-
     private static String NBTTagSortDirection = "SortDirection";
-
     private static String NBTTagViewMode = "ViewMode";
-
     private static double powerDrain = 0.5D;
 
     private static SortOrder defSortOrder = SortOrder.NAME;
-
     private static SortDir defSortDirection = SortDir.ASCENDING;
-
     private static ViewItems defViewItems = ViewItems.ALL;
 
     private SortOrder sortOrder = PartChiselingTerminal.defSortOrder;
-
     private SortDir sortDirection = PartChiselingTerminal.defSortDirection;
-
     private ViewItems viewMode = PartChiselingTerminal.defViewItems;
 
     private ItemStack[] slots = new ItemStack[PartChiselingTerminal.invSize];
-
     private List<ContainerChiselingTerminal> listeners = new ArrayList<ContainerChiselingTerminal>();
 
     public PartChiselingTerminal()
@@ -280,8 +272,6 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
 
     private void notifyListeners(int slotRequest)
     {
-        //TODO: Listener stuff
-
         for (ContainerChiselingTerminal listener : this.listeners)
         {
             // Ensure the listener is still there
@@ -344,7 +334,17 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
                 return true;
             }
 
-            //TODO: Do Chisel slots
+            if((slotRequest == PartChiselingTerminal.chiselFilter))
+            {
+                return Helper.isBlockChiselable(Carving.chisel.getGroup(is));
+            }
+
+            if( ( slotRequest >= PartChiselingTerminal.VIEW_SLOT_MIN ) && ( slotRequest <= PartChiselingTerminal.VIEW_SLOT_MAX ) )
+            {
+                // Is the stack a view slot?
+                return( is.getItem() instanceof ItemViewCell );
+
+            }
 
             return true;
         }
@@ -387,7 +387,15 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
             return;
         }
 
-        // TODO: Do Drops
+        for( int slotIndex = 0; slotIndex < PartChiselingTerminal.invSize; slotIndex++ )
+        {
+            ItemStack slotStack = this.slots[slotIndex];
+
+            if( slotStack != null )
+            {
+                drops.add( slotStack );
+            }
+        }
     }
 
     @Override
@@ -533,6 +541,8 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
                 NBTTagCompound tagCompound = new NBTTagCompound();
 
                 tagCompound.setByte(PartChiselingTerminal.NBTTagSlot, (byte) i);
+
+                this.slots[i].writeToNBT(NBTData);
 
                 tagList.appendTag(tagCompound);
             }

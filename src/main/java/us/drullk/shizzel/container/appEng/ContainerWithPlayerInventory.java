@@ -16,7 +16,7 @@ public abstract class ContainerWithPlayerInventory extends Container
 
     protected static final int renderSlotSize = 18;
 
-    private static final int renderXOffset = 7;
+    private static final int renderXOffset = 8;
 
     private int firstPlayerSlotNumber = -1, lastPlayerSlotNumber = -1;
 
