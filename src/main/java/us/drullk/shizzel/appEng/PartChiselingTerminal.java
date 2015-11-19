@@ -496,14 +496,12 @@ public class PartChiselingTerminal extends AEPartAbstractRotateable implements I
                     if (slotIndex == PartChiselingTerminal.CHISEL_FILTER_SLOT_INDEX)
                     {
                         // Validate the block
-                        System.out.println(slotStack);
                         if (!Helper.isBlockChiselable(Carving.chisel.getGroup(slotStack)))
                         {
                             // Invalid block data
                             slotStack = null;
                         }
                     }
-                    System.out.println(slotStack);
 
                     this.slots[slotIndex] = slotStack;
                 }
