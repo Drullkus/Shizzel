@@ -4,6 +4,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import us.drullk.shizzel.Shizzel;
 import us.drullk.shizzel.ShizzelProps;
+import us.drullk.shizzel.tileentity.TileAutoChisel;
 
 public class Blocks {
     public static BlockMachine autoChiseler;
@@ -19,6 +20,7 @@ public class Blocks {
 
     public static void init()
     {
+        GameRegistry.registerTileEntity(TileAutoChisel.class, "autoshizzel");
         Shizzel.proxy.makeModel(autoChiseler, "autochiseler");
     }
 

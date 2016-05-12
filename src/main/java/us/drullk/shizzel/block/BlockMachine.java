@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import us.drullk.shizzel.tileentity.TileAutoChisel;
 
 public class BlockMachine extends BlockContainer
 {
@@ -17,12 +18,12 @@ public class BlockMachine extends BlockContainer
         this.setHarvestLevel("pickaxe",1);
         this.setHardness(3.0f);
         this.setResistance(9.0f);
-        this.setStepSound(SoundType.METAL);
+        this.setSoundType(SoundType.METAL);
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return null;
+        return new TileAutoChisel();
     }
 
     @Override
