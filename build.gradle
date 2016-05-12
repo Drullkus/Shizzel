@@ -70,19 +70,6 @@ dependencies {
     deobfCompile "team.chisel:Chisel:${chisel_version}"
 }
 
-/*lombok {
-    version = "1.16.6"
-    sha256 = "e0a471be03e1e6b02bf019480cec7a3ac9801702bf7bf62f15d077ad4df8dd5d"
-}
-
-import net.franz_becker.gradle.lombok.task.DelombokTask
-
-task delombok(type: DelombokTask) {
-    args("src/main/java", "-d", "build/sources/delomboked/java")
-}
-
-tasks.eclipse.dependsOn installLombok*/
-
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
