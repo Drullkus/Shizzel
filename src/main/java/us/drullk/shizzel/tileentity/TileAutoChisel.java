@@ -30,8 +30,7 @@ public class TileAutoChisel extends TileEntityLockable implements ITickable, IIn
     0 - Input
     1 - Chisel
     2 - Output
-    3 - Upgrade 1 - Lesser Chisel Dmg
-    4 - Upgrade 2 - RF power - More consumes less power
+    3 - Upgrades - Lesser Chisel Dmg /or/ RF power - More upgrades consumes less power
     */
 
     public TileAutoChisel()
@@ -104,7 +103,7 @@ public class TileAutoChisel extends TileEntityLockable implements ITickable, IIn
 
     @Override
     public int getSizeInventory() {
-        return 5;
+        return 4;
     }
 
     @Override

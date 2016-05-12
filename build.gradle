@@ -68,6 +68,7 @@ dependencies {
     //deobfCompile "mcp.mobius.waila:Waila:${waila_version}"
     deobfCompile "mezz.jei:jei_${minecraft_version}:${jei_version}"
     compile "team.chisel:Chisel:${chisel_version}:sources"
+    compile "team.chisel:Chisel:${chisel_version}:api"
 }
 
 processResources {
